@@ -16,8 +16,8 @@
         <div id="chart_div" style="width: 100%; height: 700px;">  
          <asp:Literal ID="ltScripts" runat="server"></asp:Literal>  
         </div>  
-        <asp:GridView ID="gvData" runat="server">  
-        </asp:GridView>  
+       <%-- <asp:GridView ID="gvData" runat="server">  
+        </asp:GridView>  --%>
         <br />  
         <br />  
     </div>

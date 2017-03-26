@@ -18,7 +18,7 @@ namespace Google_Chart
             if (!Page.IsPostBack)
             {
                 // Bind Gridview  
-                BindGvData();
+                //BindGvData();
 
                 // Bind Charts  
                 BindChart();
@@ -27,8 +27,8 @@ namespace Google_Chart
             private void BindGvData()
         {
             //asp 그리드 뷰에 데이터 매핑시키기
-            gvData.DataSource = GetChartData();
-            gvData.DataBind();
+            //gvData.DataSource = GetChartData();
+            //gvData.DataBind();
         }
 
         private void BindChart()
@@ -49,7 +49,7 @@ namespace Google_Chart
                 data.addColumn('string', 'Date');
                 data.addColumn('number', 'Price');
               
-               data.addRows(" + (dsChartData.Rows.Count - 1) + ");");
+                data.addRows(" + (dsChartData.Rows.Count - 1) + ");");
 
                 for (int i = 1; i < dsChartData.Rows.Count; i++)
                 {
@@ -95,7 +95,8 @@ namespace Google_Chart
                 throw;
             }
             return dsData.Tables[0]; // DB 조회 내용을 테이블 형식으로 리턴해준다.
-        }     
+            
+        }             
         
     }
 }
