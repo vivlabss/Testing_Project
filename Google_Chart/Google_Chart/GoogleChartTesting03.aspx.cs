@@ -4,16 +4,17 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Data;
+using System.Data.SqlClient;
 using System.Text;
 using System.Configuration;
-using System.Data.SqlClient;
-using System.Data;
 
-using MathNet.Numerics;
+using Accord;
+using Accord.Statistics;
 
 namespace Google_Chart
 {
-    public partial class GoogleChartTEsting02 : System.Web.UI.Page
+    public partial class GoogleChartTesting03 : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -26,36 +27,18 @@ namespace Google_Chart
                 BindChart();
             }
         }
-        private void BindGvData()
-        {
-            //asp 그리드 뷰에 데이터 매핑시키기
-            //gvData.DataSource = GetChartData();
-            //gvData.DataBind();
-        }
 
         private void BindChart()
         {
             DataTable dsChartData = new DataTable();
+            DataTable dsChartData2 = new DataTable();
             StringBuilder strScript = new StringBuilder();
-            List<double> xData = new List<double>();
-            List<double> tData = new List<double>();
-            List<double> LRData = new List<double>();
 
             dsChartData = GetChartData();
-
-            LinearRegression(dsChartData, xData, tData, LRData);
-
-            //data.addColumn('number', 'LR');
-            //strScript.Append("data.setCell(" + (i - 1) + "," + 2 + "," + LRData[i] + ") ;");
-            List<double> testData = new List<double>();
-            for (int i =0; i < dsChartData.Rows.Count ; i++)
-            {
-                testData.Add(85000 + i);
-            }
+            dsChartData2 = GetChartData2();
 
             try
             {
-                //다중 차트 그리기
                 #region 구글차트 스크립트
                 strScript.Append(@"<script type='text/javascript'> 
                 google.load( 'visualization', '1', {'packages':['corechart']});
@@ -63,8 +46,8 @@ namespace Google_Chart
                 function drawChart() {
                 var data = new google.visualization.DataTable();
                 data.addColumn('string', 'Date');
-                data.addColumn('number', 'Price');
-                data.addColumn('number', 'LR');
+                data.addColumn('number', 'SK_Price');
+                data.addColumn('number', 'LG-화학');
               
                 data.addRows(" + (dsChartData.Rows.Count - 1) + ");");
 
@@ -72,16 +55,16 @@ namespace Google_Chart
                 {
                     strScript.Append("data.setCell( " + (i - 1) + "," + 0 + ",'" + dsChartData.Rows[i]["DATE"] + "');");
                     strScript.Append("data.setCell(" + (i - 1) + "," + 1 + "," + dsChartData.Rows[i]["PRICE_CLOSE"] + ") ;");
-                    strScript.Append("data.setCell(" + (i - 1) + "," + 2 + "," + LRData[dsChartData.Rows.Count - i] + ") ;");
+                    strScript.Append("data.setCell(" + (i - 1) + "," + 2 + "," + dsChartData2.Rows[i]["PRICE_CLOSE"] + ") ;");
 
                 }
                 strScript.Append("data.sort({ column: 0, asc: true});");
                 strScript.Append(
                     " var options = {" +
-                        "title : 'SK Innovation Stock Price'," +
+                        "title : 'Stock Price'," +
                         "legend: { position: 'bottom'}," +
                         "series: { " +
-                            "0 : { color: 'rgb(220,90,90)'}, " + "1 : { color:'rgb(120,50,50)'}" +
+                            "0 : { color: 'rgb(220,90,90)'}," +"1 : {color: 'rgb(200,120,40)'}" +
                                 "}" +
                     "};");
                 strScript.Append(" var chart = new google.visualization.LineChart(document.getElementById('chart_div'));");
@@ -98,25 +81,6 @@ namespace Google_Chart
             {
                 dsChartData.Dispose();
                 strScript.Clear();
-            }
-        }
-        // 선형회귀
-        private static void LinearRegression(DataTable dsChartData, List<double> xData, List<double> tData, List<double> LRData)
-        {
-            for (int i = 1; i < dsChartData.Rows.Count; i++)
-            {
-                xData.Add(double.Parse(dsChartData.Rows[i]["PRICE_CLOSE"].ToString()));
-                tData.Add(i);
-            }
-            xData.Sort();
-            double[] xxData = xData.ToArray();
-            double[] ttData = tData.ToArray();
-            Tuple<double, double> p = Fit.Line(xxData, ttData);
-            double intercept = p.Item1;
-            double slope = p.Item2;
-            for (int i = 0; i < dsChartData.Rows.Count; i++)
-            {
-                LRData.Add(i * slope + intercept);
             }
         }
 
@@ -141,6 +105,67 @@ namespace Google_Chart
                 throw;
             }
             return dsData.Tables[0]; // DB 조회 내용을 테이블 형식으로 리턴해준다.           
+        }
+
+        private DataTable GetChartData2() //새로운 저장프로시저 정의
+        {
+            DataSet dsData = new DataSet();
+            try
+            {
+                SqlConnection sqlCon = new SqlConnection(ConfigurationManager.ConnectionStrings["connectionString"].ConnectionString);
+                SqlDataAdapter sqlCmd = new SqlDataAdapter("Get_Data_LGCH", sqlCon);
+                sqlCmd.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+                sqlCon.Open();
+
+                sqlCmd.Fill(dsData);
+
+                sqlCon.Close();
+            }
+            catch
+            {
+                throw;
+            }
+            return dsData.Tables[0]; // DB 조회 내용을 테이블 형식으로 리턴해준다.           
+        }
+
+        //상관관계
+        private double[,] Calc_correlation(DataTable dsChartData, DataTable dsChartData2)
+        {
+            double[,] datazip = new double[2,dsChartData.Rows.Count-1];
+            double[,] result = new double[2, dsChartData.Rows.Count-1];
+            for(int i = 0; i < 2; i++)
+            {               
+                for(int j = 0; j < dsChartData2.Rows.Count-1; j++)
+                {
+                    if(j== 1838)
+                    {
+                        break;
+                    }
+                    if(i == 0)
+                    {
+                        datazip[i,j] = double.Parse(dsChartData.Rows[j+1]["PRICE_CLOSE"].ToString());
+                    }
+                    else if ( i == 1)
+                    {
+                        datazip[i, j] = double.Parse(dsChartData2.Rows[j+1]["PRICE_CLOSE"].ToString());
+                    }
+                }
+            }
+
+                for(int j = 0; j < dsChartData.Rows.Count-1; j++)
+                {
+                    Response.Write(datazip[0,j] + " " + datazip[1,j] + "<br />" );
+                }
+
+            
+            result = Measures.Correlation(datazip);
+            for(int j = 0; j < dsChartData.Rows.Count-1; j++)
+            {
+                Response.Write(result[0,j] + " " + result[1,j] + "<br />");
+            }
+            return result;
+            
         }
     }
 }
