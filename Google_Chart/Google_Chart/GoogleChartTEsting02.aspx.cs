@@ -99,7 +99,7 @@ namespace Google_Chart
                 strScript.Clear();
             }
         }
-        // MATHNET을 이용한 선형회귀
+        // 선형회귀
         private static void LinearRegression(DataTable dsChartData, List<double> xData, List<double> tData, List<double> LRData)
         {
             for (int i = 1; i < dsChartData.Rows.Count; i++)
