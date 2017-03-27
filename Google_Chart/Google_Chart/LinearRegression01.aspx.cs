@@ -10,11 +10,13 @@ using System.Text;
 using System.Configuration;
 
 using Accord;
+using Accord.MachineLearning;
 using Accord.Statistics;
+using Accord.Statistics.Models.Regression.Linear;
 
 namespace Google_Chart
 {
-    public partial class GoogleChartTesting03 : System.Web.UI.Page
+    public partial class LinearRegression01 : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -29,12 +31,15 @@ namespace Google_Chart
             DataTable dsChartData = new DataTable();
             DataTable dsChartData2 = new DataTable();
             StringBuilder strScript = new StringBuilder();
+            double[] LR;
 
             dsChartData = GetChartData();
             dsChartData2 = GetChartData2();
 
-            try
-            {
+            LR = LinearRegression(dsChartData, dsChartData2);
+
+            //try
+            //{
                 #region 구글차트 스크립트
                 strScript.Append(@"<script type='text/javascript'> 
                 google.load( 'visualization', '1', {'packages':['corechart']});
@@ -44,6 +49,7 @@ namespace Google_Chart
                 data.addColumn('string', 'Date');
                 data.addColumn('number', 'SK_Price');
                 data.addColumn('number', 'LG-화학');
+                data.addColumn('number', 'LR');
               
                 data.addRows(" + (dsChartData.Rows.Count - 1) + ");");
 
@@ -52,6 +58,7 @@ namespace Google_Chart
                     strScript.Append("data.setCell( " + (i - 1) + "," + 0 + ",'" + dsChartData.Rows[i]["DATE"] + "');");
                     strScript.Append("data.setCell(" + (i - 1) + "," + 1 + "," + dsChartData.Rows[i]["PRICE_CLOSE"] + ") ;");
                     strScript.Append("data.setCell(" + (i - 1) + "," + 2 + "," + dsChartData2.Rows[i]["PRICE_CLOSE"] + ") ;");
+                    strScript.Append("data.setCell(" + (i - 1) + "," + 3 + "," + LR[i - 1] + ") ;");
 
                 }
                 strScript.Append("data.sort({ column: 0, asc: true});");
@@ -60,7 +67,7 @@ namespace Google_Chart
                         "title : 'Stock Price'," +
                         "legend: { position: 'bottom'}," +
                         "series: { " +
-                            "0 : { color: 'rgb(220,90,90)'}," +"1 : {color: 'rgb(200,120,40)'}" +
+                            "0 : { color: 'rgb(220,90,90)'}," + "1 : {color: 'rgb(200,120,40)'}," + "2 : {color: 'rgb(150,190,140)'}"+
                                 "}" +
                     "};");
                 strScript.Append(" var chart = new google.visualization.LineChart(document.getElementById('chart_div'));");
@@ -69,15 +76,15 @@ namespace Google_Chart
                 strScript.Append("</script>");
                 ltScripts.Text = strScript.ToString(); //ASP 리터럴 테그에 위의 자바스크릅트 삽입 !!    
                 #endregion
-            }
-            catch
-            {
-            }
-            finally
-            {
+           // }
+           // catch
+            //{
+           // }
+           // finally
+           // {
                 dsChartData.Dispose();
                 strScript.Clear();
-            }
+           // }
         }
 
         private DataTable GetChartData()
@@ -126,42 +133,26 @@ namespace Google_Chart
         }
 
         //상관관계
-        private double[,] Calc_correlation(DataTable dsChartData, DataTable dsChartData2)
+        private double[] LinearRegression(DataTable dsChartData, DataTable dsChartData2)
         {
-            double[,] datazip = new double[2,dsChartData.Rows.Count-1];
-            double[,] result = new double[2, dsChartData.Rows.Count-1];
-            for(int i = 0; i < 2; i++)
-            {               
-                for(int j = 0; j < dsChartData2.Rows.Count-1; j++)
-                {
-                    if(j== 1838)
-                    {
-                        break;
-                    }
-                    if(i == 0)
-                    {
-                        datazip[i,j] = double.Parse(dsChartData.Rows[j+1]["PRICE_CLOSE"].ToString());
-                    }
-                    else if ( i == 1)
-                    {
-                        datazip[i, j] = double.Parse(dsChartData2.Rows[j+1]["PRICE_CLOSE"].ToString());
-                    }
-                }
+            double[] inputs = new double[dsChartData2.Rows.Count - 1];
+            double[] outputs = new double[dsChartData2.Rows.Count - 1];
+            double[] result = new double[dsChartData2.Rows.Count - 1];
+
+            for( int i = 1; i < dsChartData.Rows.Count; i++)
+            {
+                inputs[i - 1] = double.Parse(dsChartData2.Rows[i]["PRICE_CLOSE"].ToString());
+                outputs[i - 1] = double.Parse(dsChartData.Rows[i]["PRICE_CLOSE"].ToString());
             }
 
-                for(int j = 0; j < dsChartData.Rows.Count-1; j++)
-                {
-                    Response.Write(datazip[0,j] + " " + datazip[1,j] + "<br />" );
-                }
+            OrdinaryLeastSquares ols = new OrdinaryLeastSquares();
+            SimpleLinearRegression lr = ols.Learn(inputs, outputs);
 
-            
-            result = Measures.Correlation(datazip);
-            for(int j = 0; j < dsChartData.Rows.Count-1; j++)
+            for(int i = 0; i < dsChartData.Rows.Count - 1; i++)
             {
-                Response.Write(result[0,j] + " " + result[1,j] + "<br />");
+                result[i] = lr.Transform(outputs[i]);
             }
             return result;
-            
         }
     }
 }
