@@ -4,15 +4,15 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
 using System.Text;
+using System.Configuration;
+using System.Data.SqlClient;
+using System.Data;
 using MathNet.Numerics;
 
 namespace Google_Chart
 {
-    public partial class GoogleChartTesting01 : System.Web.UI.Page
+    public partial class GoogleChartTEsting02 : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -25,7 +25,7 @@ namespace Google_Chart
                 BindChart();
             }
         }
-            private void BindGvData()
+        private void BindGvData()
         {
             //asp 그리드 뷰에 데이터 매핑시키기
             //gvData.DataSource = GetChartData();
@@ -47,14 +47,14 @@ namespace Google_Chart
             //data.addColumn('number', 'LR');
             //strScript.Append("data.setCell(" + (i - 1) + "," + 2 + "," + LRData[i] + ") ;");
             List<double> testData = new List<double>();
-            for(int i = 20000; i < dsChartData.Rows.Count -1; i = i + 100)
+            for (int i =0; i < dsChartData.Rows.Count ; i++)
             {
-                testData.Add(i);
+                testData.Add(85000 + i);
             }
 
             try
             {
-                //dsChartData = GetChartData();
+                //다중 차트 그리기
                 #region 구글차트 스크립트
                 strScript.Append(@"<script type='text/javascript'> 
                 google.load( 'visualization', '1', {'packages':['corechart']});
@@ -63,13 +63,15 @@ namespace Google_Chart
                 var data = new google.visualization.DataTable();
                 data.addColumn('string', 'Date');
                 data.addColumn('number', 'Price');
+                data.addColumn('number', 'LR');
               
                 data.addRows(" + (dsChartData.Rows.Count - 1) + ");");
 
                 for (int i = 1; i < dsChartData.Rows.Count; i++)
                 {
                     strScript.Append("data.setCell( " + (i - 1) + "," + 0 + ",'" + dsChartData.Rows[i]["DATE"] + "');");
-                    strScript.Append("data.setCell(" + (i - 1) + "," + 1 + "," + dsChartData.Rows[i]["PRICE_CLOSE"] + ") ;");                  
+                    strScript.Append("data.setCell(" + (i - 1) + "," + 1 + "," + dsChartData.Rows[i]["PRICE_CLOSE"] + ") ;");
+                    strScript.Append("data.setCell(" + (i - 1) + "," + 2 + "," + LRData[dsChartData.Rows.Count - i] + ") ;");
 
                 }
                 strScript.Append("data.sort({ column: 0, asc: true});");
@@ -78,7 +80,7 @@ namespace Google_Chart
                         "title : 'SK Innovation Stock Price'," +
                         "legend: { position: 'bottom'}," +
                         "series: { " +
-                            "0 : { color: 'rgb(220,90,90)'} " + 
+                            "0 : { color: 'rgb(220,90,90)'}, " + "1 : { color:'rgb(120,50,50)'}" +
                                 "}" +
                     "};");
                 strScript.Append(" var chart = new google.visualization.LineChart(document.getElementById('chart_div'));");
@@ -97,7 +99,7 @@ namespace Google_Chart
                 strScript.Clear();
             }
         }
-
+        // MATHNET을 이용한 선형회귀
         private static void LinearRegression(DataTable dsChartData, List<double> xData, List<double> tData, List<double> LRData)
         {
             for (int i = 1; i < dsChartData.Rows.Count; i++)
@@ -111,7 +113,7 @@ namespace Google_Chart
             Tuple<double, double> p = Fit.Line(xxData, ttData);
             double intercept = p.Item1;
             double slope = p.Item2;
-            for (int i = 0; i < xxData.Length; i++)
+            for (int i = 0; i < dsChartData.Rows.Count; i++)
             {
                 LRData.Add(i * slope + intercept);
             }
@@ -138,7 +140,6 @@ namespace Google_Chart
                 throw;
             }
             return dsData.Tables[0]; // DB 조회 내용을 테이블 형식으로 리턴해준다.           
-        }             
-        
+        }
     }
 }
