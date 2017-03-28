@@ -38,8 +38,8 @@ namespace Google_Chart
 
             LR = LinearRegression(dsChartData, dsChartData2);
 
-            //try
-            //{
+            try
+            {
                 #region 구글차트 스크립트
                 strScript.Append(@"<script type='text/javascript'> 
                 google.load( 'visualization', '1', {'packages':['corechart']});
@@ -75,16 +75,16 @@ namespace Google_Chart
                 strScript.Append("$(window).resize(function(){drawChart();});");
                 strScript.Append("</script>");
                 ltScripts.Text = strScript.ToString(); //ASP 리터럴 테그에 위의 자바스크릅트 삽입 !!    
-                #endregion
-           // }
-           // catch
-            //{
-           // }
-           // finally
-           // {
+            #endregion
+        }
+            catch
+            {
+            }
+            finally
+            {
                 dsChartData.Dispose();
                 strScript.Clear();
-           // }
+            }
         }
 
         private DataTable GetChartData()

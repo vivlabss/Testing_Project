@@ -1,0 +1,23 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="LinearRegression02.aspx.cs" Inherits="Google_Chart.LinearRegression02" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+         <div id="chart_div" style="width: 100%; height: 700px;">  
+         <asp:Literal ID="ltScripts" runat="server"></asp:Literal>  
+        </div>  
+       <%-- <asp:GridView ID="gvData" runat="server">  
+        </asp:GridView>  --%>
+        <br />  
+        <br />  
+        </div>
+    </form>
+</body>
+</html>

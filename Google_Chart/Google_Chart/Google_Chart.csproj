@@ -81,6 +81,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\KOSPI.sql" />
     <Content Include="GoogleChartTEsting02.aspx" />
     <Content Include="GoogleChartTesting03.aspx" />
     <Content Include="LinearRegression01.aspx" />
@@ -132,7 +133,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <PropertyGroup>
