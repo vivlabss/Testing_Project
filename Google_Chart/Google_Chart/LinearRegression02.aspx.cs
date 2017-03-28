@@ -63,11 +63,12 @@ namespace Google_Chart
                 }
                 strScript.Append("data.sort({ column: 0, asc: true});");
                 strScript.Append(
-                    " var options = {" +                      
+                    " var options = {" +             
+                        "vAxes : {0: {viewWindow : {max : 3200000, min: 100000}} , 1: {viewWindow : {max :270000, min : 60000}} }, "+
                         "title : 'Stock Price'," +
                         "legend: { position: 'bottom'}," +
                         "series: { " +
-                            "0 : { color: 'rgb(220,90,90)'}," + "1 : {color: 'rgb(200,120,40)'}," + "2 : {color: 'rgb(150,190,140)'}" +
+                            "0 : {targetAxisIndex:1}," + "1 : {targetAxisIndex:1}," + "2 : {targetAxisIndex:0}" +
                                 "}" +
                     "};");
                 strScript.Append(" var chart = new google.visualization.LineChart(document.getElementById('chart_div'));");
@@ -132,6 +133,7 @@ namespace Google_Chart
             return dsData.Tables[0]; // DB 조회 내용을 테이블 형식으로 리턴해준다.           
         }
 
+        //회귀 데이터가 매우 이상하다. 검증할 필요가 있다.
         private double[] LinearRegression(DataTable dsChartData, DataTable dsChartData2)
         {
             double[] inputs = new double[dsChartData2.Rows.Count - 1];
