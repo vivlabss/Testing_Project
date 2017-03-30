@@ -16,27 +16,29 @@ using Accord.Statistics.Models.Regression.Linear;
 
 namespace Google_Chart
 {
-	public partial class LinearRegression02 : System.Web.UI.Page
-	{
+    public partial class LinearRegression03 : System.Web.UI.Page
+    {
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!Page.IsPostBack)
             {
                 BindChart();
-            }
+            }         
         }
 
         private void BindChart()
         {
             DataTable dsChartData = new DataTable();
             DataTable dsChartData2 = new DataTable();
+            DataTable dsChartData3 = new DataTable();
             StringBuilder strScript = new StringBuilder();
             double[] LR;
 
             dsChartData = GetChartData();
             dsChartData2 = GetChartData2();
+            dsChartData3 = GetChartData3();
 
-            LR = LinearRegression(dsChartData, dsChartData2);
+            LR = LinearRegression(dsChartData, dsChartData2, dsChartData3);
 
             try
             {
@@ -48,7 +50,6 @@ namespace Google_Chart
                 var data = new google.visualization.DataTable();
                 data.addColumn('string', 'Date');
                 data.addColumn('number', 'SK_Price');
-                data.addColumn('number', 'KOSPI');
                 data.addColumn('number', 'LR');
               
                 data.addRows(" + (dsChartData2.Rows.Count - 1) + ");");
@@ -57,14 +58,13 @@ namespace Google_Chart
                 {
                     strScript.Append("data.setCell( " + (i - 1) + "," + 0 + ",'" + dsChartData.Rows[i]["DATE"] + "');");
                     strScript.Append("data.setCell(" + (i - 1) + "," + 1 + "," + dsChartData.Rows[i]["PRICE_CLOSE"] + ") ;");
-                    strScript.Append("data.setCell(" + (i - 1) + "," + 2 + "," + dsChartData2.Rows[i]["PRICE_CLOSE"] + ") ;");
-                    strScript.Append("data.setCell(" + (i - 1) + "," + 3 + "," + LR[i - 1] + ") ;");
+                    strScript.Append("data.setCell(" + (i - 1) + "," + 2 + "," + LR[i - 1] + ") ;");
 
                 }
                 strScript.Append("data.sort({ column: 0, asc: true});");
                 strScript.Append(
-                    " var options = {" +             
-          
+                    " var options = {" +
+
                         "title : 'Stock Price'," +
                         "legend: { position: 'bottom'}," +
                         "series: { " +
@@ -134,26 +134,59 @@ namespace Google_Chart
             return dsData.Tables[0]; // DB 조회 내용을 테이블 형식으로 리턴해준다.           
         }
 
-        private double[] LinearRegression(DataTable dsChartData, DataTable dsChartData2)
+        private DataTable GetChartData3()
         {
-            double[] inputs = new double[dsChartData2.Rows.Count - 1];
+            DataSet dsData = new DataSet();
+            try
+            {
+                SqlConnection sqlCon = new SqlConnection(ConfigurationManager.ConnectionStrings["connectionString"].ConnectionString);
+                SqlDataAdapter sqlCmd = new SqlDataAdapter("Get_Data_LGCH", sqlCon);
+                sqlCmd.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+                sqlCon.Open();
+
+                sqlCmd.Fill(dsData);
+
+                sqlCon.Close();
+            }
+            catch
+            {
+                throw;
+            }
+            return dsData.Tables[0];
+        }        
+
+        private double[] LinearRegression(DataTable dsChartData, DataTable dsChartData2, DataTable dsChartData3)
+        {
+            //가변배열 초기화 !!
+            double[][] inputs = new double[dsChartData2.Rows.Count - 1][];
+            for(int i = 0; i < dsChartData2.Rows.Count - 1; i++)
+            {
+                inputs[i] = new double[2];
+            }
+
             double[] outputs = new double[dsChartData2.Rows.Count - 1];
             double[] result = new double[dsChartData2.Rows.Count - 1];
 
             for (int i = 1; i < dsChartData2.Rows.Count; i++)
             {
-                inputs[i - 1] = double.Parse(dsChartData2.Rows[i]["PRICE_CLOSE"].ToString());
-                outputs[i - 1] = double.Parse(dsChartData.Rows[i]["PRICE_CLOSE"].ToString());
+                if (dsChartData2.Rows[i]["PRICE_CLOSE"].ToString() != null || dsChartData3.Rows[i]["PRICE_CLOSE"].ToString() != null || dsChartData.Rows[i]["PRICE_CLOSE"].ToString() != null)
+                {
+                    inputs[i - 1][0] = double.Parse(dsChartData2.Rows[i]["PRICE_CLOSE"].ToString());
+                    inputs[i - 1][1] = double.Parse(dsChartData3.Rows[i]["PRICE_CLOSE"].ToString());
+                    outputs[i - 1] = double.Parse(dsChartData.Rows[i]["PRICE_CLOSE"].ToString());
+                }
+                else
+                {
+                    continue;
+                }          
+
             }
 
-            OrdinaryLeastSquares ols = new OrdinaryLeastSquares();
-            SimpleLinearRegression lr = ols.Learn(inputs, outputs);
-            Response.Write("Slope : " + lr.Slope);
-            Response.Write("Intercept : " + lr.Intercept);
-            for (int i = 0; i < dsChartData2.Rows.Count - 1; i++)
-            {
-                result[i] = lr.Transform(inputs[i]);
-            }
+            OrdinaryLeastSquares ols = new OrdinaryLeastSquares(){ UseIntercept = true };
+            MultipleLinearRegression lr = ols.Learn(inputs, outputs);
+
+            result = lr.Transform(inputs);
             return result;
         }
     }

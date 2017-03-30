@@ -86,6 +86,7 @@
     <Content Include="GoogleChartTesting03.aspx" />
     <Content Include="LinearRegression01.aspx" />
     <Content Include="LinearRegression02.aspx" />
+    <Content Include="LinearRegression03.aspx" />
     <Content Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -137,6 +138,13 @@
     </Compile>
     <Compile Include="LinearRegression02.aspx.designer.cs">
       <DependentUpon>LinearRegression02.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="LinearRegression03.aspx.cs">
+      <DependentUpon>LinearRegression03.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LinearRegression03.aspx.designer.cs">
+      <DependentUpon>LinearRegression03.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
