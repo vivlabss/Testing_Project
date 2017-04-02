@@ -75,6 +75,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Data\data.csv" />
+    <None Include="Data\data.xlsx" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
