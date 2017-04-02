@@ -20,6 +20,7 @@ namespace MachineLearning_Test
             byte[] test;
             double[] temp02;
             double[][] inputs = new double[40][];
+            int[] outputs = new int[40];
 
             for (int i = 0; i < 20; i++)
             {
@@ -43,7 +44,6 @@ namespace MachineLearning_Test
                 inputs[i + 20] = temp_2;
             }
 
-            int[] outputs = new int[40];
             for (int i = 0; i < 20; i++)
             {
                 outputs[i] = 0;
@@ -60,7 +60,7 @@ namespace MachineLearning_Test
                 double[] temp_22;
                 temp01.ToList<byte>().ForEach(b => temp_11.Add(Convert.ToDouble(b)));
                 temp_22 = temp_11.ToArray<double>();
-                Console.WriteLine(knn.Compute(temp_22));
+                //Console.WriteLine(knn.Compute(temp_22));
             }
         }
 
