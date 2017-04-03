@@ -35,7 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>MachineLearning_Test.ADF_Test</StartupObject>
+    <StartupObject>MachineLearning_Test.knn_image</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accord, Version=3.4.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
@@ -104,9 +104,39 @@
     <Content Include="Data\train\false19.bmp" />
     <Content Include="Data\train\false2.bmp" />
     <Content Include="Data\train\false20.bmp" />
+    <Content Include="Data\train\false21.bmp" />
+    <Content Include="Data\train\false22.bmp" />
+    <Content Include="Data\train\false23.bmp" />
+    <Content Include="Data\train\false24.bmp" />
+    <Content Include="Data\train\false25.bmp" />
+    <Content Include="Data\train\false26.bmp" />
+    <Content Include="Data\train\false27.bmp" />
+    <Content Include="Data\train\false28.bmp" />
+    <Content Include="Data\train\false29.bmp" />
     <Content Include="Data\train\false3.bmp" />
+    <Content Include="Data\train\false30.bmp" />
+    <Content Include="Data\train\false31.bmp" />
+    <Content Include="Data\train\false32.bmp" />
+    <Content Include="Data\train\false33.bmp" />
+    <Content Include="Data\train\false34.bmp" />
+    <Content Include="Data\train\false35.bmp" />
+    <Content Include="Data\train\false36.bmp" />
+    <Content Include="Data\train\false37.bmp" />
+    <Content Include="Data\train\false38.bmp" />
+    <Content Include="Data\train\false39.bmp" />
     <Content Include="Data\train\false4.bmp" />
+    <Content Include="Data\train\false40.bmp" />
+    <Content Include="Data\train\false41.bmp" />
+    <Content Include="Data\train\false42.bmp" />
+    <Content Include="Data\train\false43.bmp" />
+    <Content Include="Data\train\false44.bmp" />
+    <Content Include="Data\train\false45.bmp" />
+    <Content Include="Data\train\false46.bmp" />
+    <Content Include="Data\train\false47.bmp" />
+    <Content Include="Data\train\false48.bmp" />
+    <Content Include="Data\train\false49.bmp" />
     <Content Include="Data\train\false5.bmp" />
+    <Content Include="Data\train\false50.bmp" />
     <Content Include="Data\train\false6.bmp" />
     <Content Include="Data\train\false7.bmp" />
     <Content Include="Data\train\false8.bmp" />
@@ -124,9 +154,39 @@
     <Content Include="Data\train\true19.bmp" />
     <Content Include="Data\train\true2.bmp" />
     <Content Include="Data\train\true20.bmp" />
+    <Content Include="Data\train\true21.bmp" />
+    <Content Include="Data\train\true22.bmp" />
+    <Content Include="Data\train\true23.bmp" />
+    <Content Include="Data\train\true24.bmp" />
+    <Content Include="Data\train\true25.bmp" />
+    <Content Include="Data\train\true26.bmp" />
+    <Content Include="Data\train\true27.bmp" />
+    <Content Include="Data\train\true28.bmp" />
+    <Content Include="Data\train\true29.bmp" />
     <Content Include="Data\train\true3.bmp" />
+    <Content Include="Data\train\true30.bmp" />
+    <Content Include="Data\train\true31.bmp" />
+    <Content Include="Data\train\true32.bmp" />
+    <Content Include="Data\train\true33.bmp" />
+    <Content Include="Data\train\true34.bmp" />
+    <Content Include="Data\train\true35.bmp" />
+    <Content Include="Data\train\true36.bmp" />
+    <Content Include="Data\train\true37.bmp" />
+    <Content Include="Data\train\true38.bmp" />
+    <Content Include="Data\train\true39.bmp" />
     <Content Include="Data\train\true4.bmp" />
+    <Content Include="Data\train\true40.bmp" />
+    <Content Include="Data\train\true41.bmp" />
+    <Content Include="Data\train\true42.bmp" />
+    <Content Include="Data\train\true43.bmp" />
+    <Content Include="Data\train\true44.bmp" />
+    <Content Include="Data\train\true45.bmp" />
+    <Content Include="Data\train\true46.bmp" />
+    <Content Include="Data\train\true47.bmp" />
+    <Content Include="Data\train\true48.bmp" />
+    <Content Include="Data\train\true49.bmp" />
     <Content Include="Data\train\true5.bmp" />
+    <Content Include="Data\train\true50.bmp" />
     <Content Include="Data\train\true6.bmp" />
     <Content Include="Data\train\true7.bmp" />
     <Content Include="Data\train\true8.bmp" />
