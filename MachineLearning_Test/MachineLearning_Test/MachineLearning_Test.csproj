@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="ADF_Test.cs" />
     <Compile Include="knn_image.cs" />
+    <Compile Include="Logistic_Dog_Cat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
