@@ -34,29 +34,33 @@ namespace MachineLearning_Test
             DirectoryInfo di_train = new DirectoryInfo(path_train);
             DirectoryInfo di_test = new DirectoryInfo(path_test);
             Bitmap[] bitmaps = new Bitmap[di_train.GetFiles().Length];
-
+ 
             Processing_cat(path_train, di_train, bitmaps);
 
             Processing_dog(path_train, di_train, bitmaps);
 
-            Console.WriteLine(bitmaps.Length);
+            //Console.WriteLine(bitmaps.Length);
         }
 
         private static void Processing_dog(string path_train, DirectoryInfo di_train, Bitmap[] bitmaps)
         {
+            OpenCvSharp.CPlusPlus.Size size = new OpenCvSharp.CPlusPlus.Size(500, 500);
             for (int i = 0; i < di_train.GetFiles().Length / 2; i++)
             {
-                Mat mat_dog = Cv2.ImRead(path_train + @"\cat." + i + ".jpg", LoadMode.Color);
+                Mat mat_dog = Cv2.ImRead(path_train + @"\dog." + i + ".jpg", LoadMode.Color);
+                mat_dog = mat_dog.Resize(size,0,0,Interpolation.Linear);
                 bitmaps[i + di_train.GetFiles().Length / 2] = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(mat_dog);
-                Console.WriteLine(path_train + @"\cat." + i + ".jpg", LoadMode.Color);
+                Console.WriteLine(path_train + @"\dog." + i + ".jpg", LoadMode.Color);
             }
         }
 
         private static void Processing_cat(string path_train, DirectoryInfo di_train, Bitmap[] bitmaps)
         {
+            OpenCvSharp.CPlusPlus.Size size = new OpenCvSharp.CPlusPlus.Size(500, 500);
             for (int i = 0; i < di_train.GetFiles().Length / 2; i++)
             {
                 Mat mat_cat = Cv2.ImRead(path_train + @"\cat." + i + ".jpg", LoadMode.Color);
+                mat_cat = mat_cat.Resize(size, 0, 0, Interpolation.Linear);
                 bitmaps[i] = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(mat_cat);
                 Console.WriteLine(path_train + @"\cat." + i + ".jpg", LoadMode.Color);
             }
