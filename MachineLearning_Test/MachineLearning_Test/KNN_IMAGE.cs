@@ -17,8 +17,6 @@ namespace MachineLearning_Test
         static void Main(string[] args)
         {
             byte[] temp01;
-            byte[] test;
-            double[] temp02;
             double[][] inputs = new double[100][];
             int[] outputs = new int[100];
 
