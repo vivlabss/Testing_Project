@@ -27,7 +27,7 @@ namespace MachineLearning_Test
             // 참고자료 : http://terrorjang.tistory.com/88
             // http://terrorjang.tistory.com/89
 
-            // 메모리 부족 오류 발생
+            // 메모리 부족 오류 발생 => 64비트 버전으로 빌드해야 한다 !!
 
             string path_train = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\train\train";
             string path_test = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\test\test";
