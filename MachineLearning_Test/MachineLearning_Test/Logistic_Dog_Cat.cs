@@ -23,16 +23,7 @@ namespace MachineLearning_Test
 
         static void Main(string[] args)
         {
-            ConvertToBitmap();         
-        }
 
-        public static void Labeling()
-        {
-
-        }
-
-        public static void ConvertToBitmap()
-        {
             // 참고자료 : http://terrorjang.tistory.com/88
             // http://terrorjang.tistory.com/89
 
@@ -49,7 +40,6 @@ namespace MachineLearning_Test
             Processing_dog(path_train, di_train, bitmaps);
 
             Console.WriteLine(bitmaps.Length);
-
         }
 
         private static void Processing_dog(string path_train, DirectoryInfo di_train, Bitmap[] bitmaps)
