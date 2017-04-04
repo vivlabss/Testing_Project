@@ -28,7 +28,9 @@ namespace MachineLearning_Test
         }
 
         public static void ConvertToBitmap()
-        {           
+        {
+            // http://blog.naver.com/PostView.nhn?blogId=choihszg&logNo=120158078851 참고자료
+
             string path_train = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\train\train";
             string path_test = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\test\test";
             DirectoryInfo di_train = new DirectoryInfo(path_train);
