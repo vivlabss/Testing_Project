@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
 using System.Diagnostics;
+using System.Threading;
 
 using Accord;
 using Accord.MachineLearning;
@@ -43,49 +44,32 @@ namespace MachineLearning_Test
             DirectoryInfo di_test = new DirectoryInfo(path_test);
             Bitmap[] bitmaps = new Bitmap[di_train.GetFiles().Length];
 
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            for (int i = 0; i < di_train.GetFiles().Length / 2; i++)
-            {               
-                Mat mat_cat = Cv2.ImRead(path_train + @"\cat." + i + ".jpg", LoadMode.Color);
-                bitmaps[i] = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(mat_cat);
-                Console.WriteLine(path_train + @"\cat." + i + ".jpg", LoadMode.Color);
-            }
+            Processing_cat(path_train, di_train, bitmaps);
 
+            Processing_dog(path_train, di_train, bitmaps);
+
+            Console.WriteLine(bitmaps.Length);
+
+        }
+
+        private static void Processing_dog(string path_train, DirectoryInfo di_train, Bitmap[] bitmaps)
+        {
             for (int i = 0; i < di_train.GetFiles().Length / 2; i++)
             {
                 Mat mat_dog = Cv2.ImRead(path_train + @"\cat." + i + ".jpg", LoadMode.Color);
                 bitmaps[i + di_train.GetFiles().Length / 2] = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(mat_dog);
                 Console.WriteLine(path_train + @"\cat." + i + ".jpg", LoadMode.Color);
             }
-            sw.Stop();
+        }
 
-            Console.WriteLine(bitmaps.Length + "\t" + sw.ElapsedMilliseconds.ToString() + "ms");
-
-            //for (int i = 0; i < di_train.GetFiles().Length / 2; i++)
-            //{
-            //    using (IplImage src_cat = new IplImage(Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\train\train\cat." + i + ".jpg"))
-            //    using (IplImage dst_cat = new IplImage(src_cat.Size, BitDepth.U8, 1))
-            //    {
-            //        src_cat.Smooth(src_cat, SmoothType.Gaussian, 5);
-            //        src_cat.Threshold(dst_cat, 0, 255, ThresholdType.Otsu);
-
-            //        bitmaps[i] = dst_cat.ToBitmap();
-            //    }         
-            //}
-            //for (int i = 0; i < di_train.GetFiles().Length / 2; i++)
-            //{
-            //    using (IplImage src_dog = new IplImage(Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\train\train\dog." + i + ".jpg"))
-            //    using (IplImage dst_dog = new IplImage(src_dog.Size, BitDepth.U8, 1))
-            //    {
-            //        src_dog.Smooth(src_dog, SmoothType.Gaussian, 5);
-            //        src_dog.Threshold(dst_dog, 0, 255, ThresholdType.Otsu);
-
-            //        bitmaps[i + di_train.GetFiles().Length / 2] = dst_dog.ToBitmap();
-            //    }
-            //}
-            //Console.WriteLine(bitmaps.Length);
-
+        private static void Processing_cat(string path_train, DirectoryInfo di_train, Bitmap[] bitmaps)
+        {
+            for (int i = 0; i < di_train.GetFiles().Length / 2; i++)
+            {
+                Mat mat_cat = Cv2.ImRead(path_train + @"\cat." + i + ".jpg", LoadMode.Color);
+                bitmaps[i] = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(mat_cat);
+                Console.WriteLine(path_train + @"\cat." + i + ".jpg", LoadMode.Color);
+            }
         }
 
         static byte[] imageToByteArray(this System.Drawing.Image image)
