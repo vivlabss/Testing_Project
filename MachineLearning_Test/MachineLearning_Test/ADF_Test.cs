@@ -15,7 +15,9 @@ namespace MachineLearning_Test
 {
     class ADF_Test
     {
-        // 참고자료 : http://reliawiki.org/index.php/Simple_Linear_Regression_Analysis
+        // 참고자료 : http://www.statisticshowto.com/adf-augmented-dickey-fuller-test/
+        // http://higheredbcs.wiley.com/legacy/college/hill/0471723606/excel/using_excel_for_principles_of_econometrics3e.pdf
+        // http://reliawiki.org/index.php/Simple_Linear_Regression_Analysis
         // http://www.stat.yale.edu/Courses/1997-98/101/linmult.htm
         // https://www3.nd.edu/~rwilliam/stats2/l02.pdf
         // http://dept.stat.lsa.umich.edu/~kshedden/Courses/Stat401/Notes/401-multreg.pdf
@@ -25,16 +27,15 @@ namespace MachineLearning_Test
         {
             double[] raw_data = { 5, 4, 7, 5, 3, 2, 1, 5, 7, 5 }; // 향후 데이터를 입력받음
             double[] diff_raw_data = new double[raw_data.Length - 1];
-            double[] lag_raw_data = new double[raw_data.Length - 1];
+            double[] lag_raw_data = new double[raw_data.Length - 1]; 
             double[] diff_lag_raw_data = new double[raw_data.Length - 2];
 
             double[] output_diff = new double[raw_data.Length - 2];
             double[] input_lag = new double[raw_data.Length - 2];
             double[] input_diff_lag = new double[raw_data.Length - 2];
-            double[] predict_lag = new double[raw_data.Length - 2];
-            double[] predict_diff_lag = new double[raw_data.Length - 2];
             double[] predicted = new double[raw_data.Length - 2];
             double[][] inputs = new double[raw_data.Length - 2][];
+            string critical_values = "error";
 
             // diff
             for (int i = 0; i < raw_data.Length-1; i++) diff_raw_data[i] = raw_data[i + 1] - raw_data[i];
@@ -54,7 +55,35 @@ namespace MachineLearning_Test
             MultipleLinearRegression regression = olss.Learn(inputs, output_diff);
             for (int i = 0; i < raw_data.Length - 2; i++) predicted[i] = regression.Transform(inputs[i]);
             Console.WriteLine(regression.Weights[0] + "\t" + regression.Weights[1]);
-            Console.WriteLine(Calc_T(inputs, output_diff, predicted, regression)[0] + "\t" + Calc_T(inputs, output_diff, predicted, regression)[1]);
+
+            // 음의 t-value보다 작거나 양의 t-value보다 크다면 정상시계열, 그렇지 않다면 랜덤과정이다.
+            if ((raw_data.Length - 2) <=25)
+            {
+                critical_values = "No trend [5%, -3.00]\tTrend [5%, -3.60]";
+            }
+            else if ((raw_data.Length - 2) <= 50)
+            {
+                critical_values = "No trend [5%, -2.93]\tTrend [5%, -3.50]";
+            }
+            else if ((raw_data.Length - 2) <= 100)
+            {
+                critical_values = "No trend [5%, -2.89]\tTrend [5%, -3.45]";
+            }
+            else if ((raw_data.Length - 2) <= 250)
+            {
+                critical_values = "No trend [5%, -2.88]\tTrend [5%, -3.43]";
+            }
+            else if ((raw_data.Length - 2) <= 500)
+            {
+                critical_values = "No trend [5%, -2.87]\tTrend [5%, -3.42]";
+            }
+            else if ((raw_data.Length - 2) > 500)
+            {
+                critical_values = "No trend [5%, -2.86]\tTrend [5%, -3.41]";
+            }
+            Console.WriteLine(Calc_T(inputs, output_diff, predicted, regression)[0] + "\t" + Calc_T(inputs, output_diff, predicted, regression)[1]
+                + "\n" + critical_values);
+
         }
 
         static double[] Calc_T(double[][] input, double[] output , double[] predict, MultipleLinearRegression regression)
