@@ -33,14 +33,17 @@ namespace MachineLearning_Test
             string path_train = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\train\train";
             string path_test = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\test\test";
             Bitmap[] bitmaps = new Bitmap[25000];
+            Bitmap[] bitmaps_test = new Bitmap[12500];
             byte[] temp01;
             double[][] inputs = new double[25000][];
+            int[] outputs = new int[25000];
             OpenCvSharp.CPlusPlus.Size size = new OpenCvSharp.CPlusPlus.Size(500, 500);
 
             Processing_cat(path_train, bitmaps, size);
-
             Processing_dog(path_train, bitmaps, size);
+            Processing_test(path_test, bitmaps_test, size);
 
+            // 학습 데이터 바이트 배열로 변환하여 저장 
             for (int i = 0; i < bitmaps.Length; i++)
             {
                 temp01 = imageToByteArray(bitmaps[i]);
@@ -50,6 +53,16 @@ namespace MachineLearning_Test
                 temp_2 = temp_1.ToArray<double>();
                 inputs[i] = temp_2;
             }
+
+            // 라벨링 데이터 셋팅
+            for (int i = 0; i < (outputs.Length / 2); i++)
+            {
+                outputs[i] = 0;
+                outputs[i + 12500] = 1;
+            }
+
+            // 
+
         }
 
         private static void Processing_dog(string path_train, Bitmap[] bitmaps, OpenCvSharp.CPlusPlus.Size size)
@@ -74,6 +87,18 @@ namespace MachineLearning_Test
                 bitmaps[i] = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(mat_cat);
                 Console.WriteLine(path_train + @"\cat." + i + ".jpg", LoadMode.Color);
                 mat_cat.Dispose();
+            }
+        }
+
+        private static void Processing_test(string path_test, Bitmap[] bitmaps, OpenCvSharp.CPlusPlus.Size size)
+        {
+            for (int i = 0; i < 12500; i++)
+            {
+                Mat mat_test = Cv2.ImRead(path_test + @"\" + (i+1) + ".jpg", LoadMode.Color);
+                mat_test = mat_test.Resize(size, 0, 0, Interpolation.Linear);
+                bitmaps[i] = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(mat_test);
+                Console.WriteLine(path_test + @"\"+ (i+1) + ".jpg", LoadMode.Color);
+                mat_test.Dispose();
             }
         }
 
