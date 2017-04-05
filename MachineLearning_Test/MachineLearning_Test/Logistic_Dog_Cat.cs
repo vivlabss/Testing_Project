@@ -27,20 +27,29 @@ namespace MachineLearning_Test
             // 참고자료 : http://terrorjang.tistory.com/88
             // http://terrorjang.tistory.com/89
 
-            // 메모리 부족 오류 발생 => 64비트 버전으로 빌드해야 한다 !!
+            // issues 01 : 메모리 부족 오류 발생 => 64비트 버전으로 빌드해야 한다 !!
+            // issues 02 : 바이트 어레이 메모리 스트림 접근 불가 오류 => http://stackoverflow.com/questions/28172110/readtimeout-exception-with-memorystream
 
             string path_train = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\train\train";
             string path_test = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\test\test";
-            //DirectoryInfo di_train = new DirectoryInfo(path_train);
-            //DirectoryInfo di_test = new DirectoryInfo(path_test);
-            Bitmap[] bitmaps = new Bitmap[25000];           
+            Bitmap[] bitmaps = new Bitmap[25000];
+            byte[] temp01;
+            double[][] inputs = new double[25000][];
             OpenCvSharp.CPlusPlus.Size size = new OpenCvSharp.CPlusPlus.Size(500, 500);
 
             Processing_cat(path_train, bitmaps, size);
 
             Processing_dog(path_train, bitmaps, size);
 
-            //Console.WriteLine(bitmaps.Length);
+            for (int i = 0; i < bitmaps.Length; i++)
+            {
+                temp01 = imageToByteArray(bitmaps[i]);
+                List<double> temp_1 = new List<double>();
+                double[] temp_2;
+                temp01.ToList<byte>().ForEach(b => temp_1.Add(Convert.ToDouble(b)));
+                temp_2 = temp_1.ToArray<double>();
+                inputs[i] = temp_2;
+            }
         }
 
         private static void Processing_dog(string path_train, Bitmap[] bitmaps, OpenCvSharp.CPlusPlus.Size size)
@@ -68,14 +77,25 @@ namespace MachineLearning_Test
             }
         }
 
-        static byte[] imageToByteArray(this System.Drawing.Image image)
+        static byte[] imageToByteArray(this System.Drawing.Bitmap image)
         {
+            
             using (var ms = new MemoryStream())
             {
-                image.Save(ms, image.RawFormat);
+                Bitmap copy = new Bitmap(image);
+                copy.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
                 return ms.ToArray();
             }
         }
 
+        // <testing moduule>
+        //Mat mat_dog = Cv2.ImRead(path_train + @"\dog.1.jpg", LoadMode.Color);
+        //mat_dog = mat_dog.Resize(size, 0, 0, Interpolation.Linear);
+        //    Bitmap testing = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(mat_dog);
+        //temp01 = imageToByteArray(testing);
+        //List<double> temp_1 = new List<double>();
+        //double[] temp_2;
+        //temp01.ToList<byte>().ForEach(b => temp_1.Add(Convert.ToDouble(b)));
+        //    temp_2 = temp_1.ToArray<double>();
     }
 }
