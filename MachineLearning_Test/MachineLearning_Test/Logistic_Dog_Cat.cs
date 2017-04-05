@@ -10,6 +10,7 @@ using System.Threading;
 
 using Accord;
 using Accord.MachineLearning;
+using Accord.MachineLearning.VectorMachines.Learning;
 using Accord.Statistics.Models.Regression;
 using Accord.Statistics.Models.Regression.Fitting;
 
@@ -52,6 +53,7 @@ namespace MachineLearning_Test
                 temp01.ToList<byte>().ForEach(b => temp_1.Add(Convert.ToDouble(b)));
                 temp_2 = temp_1.ToArray<double>();
                 inputs[i] = temp_2;
+                Console.WriteLine(i + "바이트 배열 전환 성공");
             }
 
             // 라벨링 데이터 셋팅
@@ -61,7 +63,17 @@ namespace MachineLearning_Test
                 outputs[i + 12500] = 1;
             }
 
-            // 
+            // 로지스틱 회귀분석
+            var learner = new IterativeReweightedLeastSquares<LogisticRegression>()
+            {
+                Tolerance = 1e-10,
+                Iterations = 100,
+                Regularization = 0,
+            };
+
+            LogisticRegression regression = learner.Learn(inputs, outputs);
+
+            double[] scores = regression.Probability(inputs);
 
         }
 
