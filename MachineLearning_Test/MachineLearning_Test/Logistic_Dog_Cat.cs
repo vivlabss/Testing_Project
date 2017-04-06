@@ -55,7 +55,6 @@ namespace MachineLearning_Test
                 inputs[i] = temp_2;
                 Console.WriteLine(i + "바이트 배열 전환 성공");
             }
-
             // 라벨링 데이터 셋팅
             for (int i = 0; i < (outputs.Length / 2); i++)
             {
