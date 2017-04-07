@@ -36,7 +36,10 @@ namespace MachineLearning_Test
             Bitmap[] bitmaps = new Bitmap[25000];
             Bitmap[] bitmaps_test = new Bitmap[12500];
             byte[] temp01;
+            double[] temp_2;
+            List<double> temp_1 = new List<double>();
             double[][] inputs = new double[25000][];
+            double[][] tests = new double[12500][];
             int[] outputs = new int[25000];
             OpenCvSharp.CPlusPlus.Size size = new OpenCvSharp.CPlusPlus.Size(500, 500);
 
@@ -48,13 +51,24 @@ namespace MachineLearning_Test
             for (int i = 0; i < bitmaps.Length; i++)
             {
                 temp01 = imageToByteArray(bitmaps[i]);
-                List<double> temp_1 = new List<double>();
-                double[] temp_2;
                 temp01.ToList<byte>().ForEach(b => temp_1.Add(Convert.ToDouble(b)));
                 temp_2 = temp_1.ToArray<double>();
                 inputs[i] = temp_2;
+                temp_1.Clear();
                 Console.WriteLine(i + "바이트 배열 전환 성공");
             }
+
+            // 테스트 데이터 바이트 배열로 변환하여 저장
+            for (int i = 0; i < bitmaps.Length; i++)
+            {
+                temp01 = imageToByteArray(bitmaps_test[i]);
+                temp01.ToList<byte>().ForEach(b => temp_1.Add(Convert.ToDouble(b)));
+                temp_2 = temp_1.ToArray<double>();
+                tests[i] = temp_2;
+                temp_1.Clear();
+                Console.WriteLine(i + "바이트 배열 전환 성공");
+            }
+
             // 라벨링 데이터 셋팅
             for (int i = 0; i < (outputs.Length / 2); i++)
             {
@@ -71,8 +85,7 @@ namespace MachineLearning_Test
             };
 
             LogisticRegression regression = learner.Learn(inputs, outputs);
-
-            double[] scores = regression.Probability(inputs);
+            for (int i = 0; i < 12500; i++) Console.WriteLine(regression.Transform(tests[i]));
 
         }
 
@@ -98,6 +111,7 @@ namespace MachineLearning_Test
                 bitmaps[i] = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(mat_cat);
                 Console.WriteLine(path_train + @"\cat." + i + ".jpg", LoadMode.Color);
                 mat_cat.Dispose();
+
             }
         }
 
@@ -110,6 +124,7 @@ namespace MachineLearning_Test
                 bitmaps[i] = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(mat_test);
                 Console.WriteLine(path_test + @"\"+ (i+1) + ".jpg", LoadMode.Color);
                 mat_test.Dispose();
+
             }
         }
 
@@ -120,6 +135,7 @@ namespace MachineLearning_Test
             {
                 Bitmap copy = new Bitmap(image);
                 copy.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+                copy.Dispose();
                 return ms.ToArray();
             }
         }
