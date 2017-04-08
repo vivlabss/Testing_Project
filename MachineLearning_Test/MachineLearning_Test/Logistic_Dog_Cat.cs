@@ -30,6 +30,7 @@ namespace MachineLearning_Test
 
             // issues 01 : 메모리 부족 오류 발생 => 64비트 버전으로 빌드해야 한다 !!
             // issues 02 : 바이트 어레이 메모리 스트림 접근 불가 오류 => http://stackoverflow.com/questions/28172110/readtimeout-exception-with-memorystream
+            // trial : 64빌드 타겟팅 빌드 + configuration <gcAllowVeryLargeObjects enabled="true" />
 
             string path_train = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\train\train";
             string path_test = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\test\test";
@@ -40,7 +41,7 @@ namespace MachineLearning_Test
             List<double> temp_1 = new List<double>();
             double[][] inputs = new double[25000][];
             double[][] tests = new double[12500][];
-            int[] outputs = new int[25000];
+            bool[] outputs = new bool[25000];
             OpenCvSharp.CPlusPlus.Size size = new OpenCvSharp.CPlusPlus.Size(500, 500);
 
             Processing_cat(path_train, bitmaps, size);
@@ -72,31 +73,43 @@ namespace MachineLearning_Test
             // 라벨링 데이터 셋팅
             for (int i = 0; i < (outputs.Length / 2); i++)
             {
-                outputs[i] = 0;
-                outputs[i + 12500] = 1;
+                outputs[i] = true;
+                outputs[i + (outputs.Length/2)] = false;
             }
+            Console.WriteLine("라벨링 완료");
 
             // 로지스틱 회귀분석
-            var learner = new IterativeReweightedLeastSquares<LogisticRegression>()
+            var learner = new ProbabilisticCoordinateDescent()
             {
                 Tolerance = 1e-10,
-                Iterations = 100,
-                Regularization = 0,
+                Complexity = 1e+10,
             };
+            Console.WriteLine("회귀분석 전처리 완료");
 
-            LogisticRegression regression = learner.Learn(inputs, outputs);
-            for (int i = 0; i < 12500; i++) Console.WriteLine(regression.Transform(tests[i]));
+            var svm = learner.Learn(inputs, outputs);
+            var regression = (LogisticRegression)svm;
+            Console.WriteLine("학습완료");
+
+            StreamWriter sw = new StreamWriter("data_result.csv", false, Encoding.UTF8);
+            sw.WriteLine("id,label");
+
+            for (int i = 0; i < outputs.Length; i++)
+            {
+                sw.WriteLine(i + "," + regression.Score(tests[i]));
+            }
+            sw.Close();
+            Console.WriteLine("완료");
 
         }
 
         private static void Processing_dog(string path_train, Bitmap[] bitmaps, OpenCvSharp.CPlusPlus.Size size)
         {
 
-            for (int i = 0; i < 12500; i++)
+            for (int i = 0; i < (bitmaps.Length/2); i++)
             {
                 Mat mat_dog = Cv2.ImRead(path_train + @"\dog." + i + ".jpg", LoadMode.Color);
                 mat_dog = mat_dog.Resize(size,0,0,Interpolation.Linear);
-                bitmaps[i + 12500] = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(mat_dog);
+                bitmaps[i + (bitmaps.Length / 2)] = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(mat_dog);
                 Console.WriteLine(path_train + @"\dog." + i + ".jpg", LoadMode.Color);
                 mat_dog.Dispose();
             }
@@ -104,7 +117,7 @@ namespace MachineLearning_Test
 
         private static void Processing_cat(string path_train, Bitmap[] bitmaps, OpenCvSharp.CPlusPlus.Size size)
         {
-            for (int i = 0; i < 12500; i++)
+            for (int i = 0; i < bitmaps.Length/2; i++)
             {
                 Mat mat_cat = Cv2.ImRead(path_train + @"\cat." + i + ".jpg", LoadMode.Color);
                 mat_cat = mat_cat.Resize(size, 0, 0, Interpolation.Linear);
@@ -117,7 +130,7 @@ namespace MachineLearning_Test
 
         private static void Processing_test(string path_test, Bitmap[] bitmaps, OpenCvSharp.CPlusPlus.Size size)
         {
-            for (int i = 0; i < 12500; i++)
+            for (int i = 0; i < bitmaps.Length; i++)
             {
                 Mat mat_test = Cv2.ImRead(path_test + @"\" + (i+1) + ".jpg", LoadMode.Color);
                 mat_test = mat_test.Resize(size, 0, 0, Interpolation.Linear);
