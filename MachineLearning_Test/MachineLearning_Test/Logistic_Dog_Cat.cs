@@ -112,6 +112,7 @@ namespace MachineLearning_Test
                 bitmaps[i + (bitmaps.Length / 2)] = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(mat_dog);
                 Console.WriteLine(path_train + @"\dog." + i + ".jpg", LoadMode.Color);
                 mat_dog.Dispose();
+                mat_dog = null;
             }
         }
 
@@ -124,7 +125,7 @@ namespace MachineLearning_Test
                 bitmaps[i] = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(mat_cat);
                 Console.WriteLine(path_train + @"\cat." + i + ".jpg", LoadMode.Color);
                 mat_cat.Dispose();
-
+                mat_cat = null;
             }
         }
 
@@ -137,6 +138,7 @@ namespace MachineLearning_Test
                 bitmaps[i] = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(mat_test);
                 Console.WriteLine(path_test + @"\"+ (i+1) + ".jpg", LoadMode.Color);
                 mat_test.Dispose();
+                mat_test = null;
 
             }
         }
@@ -149,6 +151,7 @@ namespace MachineLearning_Test
                 Bitmap copy = new Bitmap(image);
                 copy.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
                 copy.Dispose();
+                copy = null;
                 return ms.ToArray();
             }
         }
