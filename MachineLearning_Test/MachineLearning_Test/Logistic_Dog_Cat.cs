@@ -2,17 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
-using System.Diagnostics;
-using System.Threading;
 
-using Accord;
-using Accord.MachineLearning;
 using Accord.MachineLearning.VectorMachines.Learning;
+using Accord.Statistics.Analysis;
 using Accord.Statistics.Models.Regression;
-using Accord.Statistics.Models.Regression.Fitting;
 
 using OpenCvSharp;
 using OpenCvSharp.CPlusPlus;
@@ -34,15 +29,15 @@ namespace MachineLearning_Test
 
             string path_train = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\train\train";
             string path_test = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\test\test";
-            Bitmap[] bitmaps = new Bitmap[25000];
-            Bitmap[] bitmaps_test = new Bitmap[12500];
+            Bitmap[] bitmaps = new Bitmap[20]; // 25000
+            Bitmap[] bitmaps_test = new Bitmap[10]; // 12500
             byte[] temp01;
             double[] temp_2;
             List<double> temp_1 = new List<double>();
-            double[][] inputs = new double[25000][];
-            double[][] tests = new double[12500][];
-            bool[] outputs = new bool[25000];
-            OpenCvSharp.CPlusPlus.Size size = new OpenCvSharp.CPlusPlus.Size(500, 500);
+            double[][] inputs = new double[20][]; // 25000
+            double[][] tests = new double[10][]; // 12500
+            double[] outputs = new double[20]; // 25000
+            OpenCvSharp.CPlusPlus.Size size = new OpenCvSharp.CPlusPlus.Size(50, 50); // 결국 사이즈를 타협했다 ㅠㅠ
 
             Processing_cat(path_train, bitmaps, size);
             Processing_dog(path_train, bitmaps, size);
@@ -52,6 +47,7 @@ namespace MachineLearning_Test
             for (int i = 0; i < bitmaps.Length; i++)
             {
                 temp01 = imageToByteArray(bitmaps[i]);
+                bitmaps[i] = null;
                 temp01.ToList<byte>().ForEach(b => temp_1.Add(Convert.ToDouble(b)));
                 temp_2 = temp_1.ToArray<double>();
                 inputs[i] = temp_2;
@@ -60,9 +56,10 @@ namespace MachineLearning_Test
             }
 
             // 테스트 데이터 바이트 배열로 변환하여 저장
-            for (int i = 0; i < bitmaps.Length; i++)
+            for (int i = 0; i < bitmaps_test.Length; i++)
             {
                 temp01 = imageToByteArray(bitmaps_test[i]);
+                bitmaps_test[i] = null;
                 temp01.ToList<byte>().ForEach(b => temp_1.Add(Convert.ToDouble(b)));
                 temp_2 = temp_1.ToArray<double>();
                 tests[i] = temp_2;
@@ -73,8 +70,8 @@ namespace MachineLearning_Test
             // 라벨링 데이터 셋팅
             for (int i = 0; i < (outputs.Length / 2); i++)
             {
-                outputs[i] = true;
-                outputs[i + (outputs.Length/2)] = false;
+                outputs[i] = 0;
+                outputs[i + (outputs.Length/2)] = 1;
             }
             Console.WriteLine("라벨링 완료");
 
@@ -93,7 +90,7 @@ namespace MachineLearning_Test
             StreamWriter sw = new StreamWriter("data_result.csv", false, Encoding.UTF8);
             sw.WriteLine("id,label");
 
-            for (int i = 0; i < outputs.Length; i++)
+            for (int i = 0; i < tests.Length; i++)
             {
                 sw.WriteLine(i + "," + regression.Score(tests[i]));
             }
