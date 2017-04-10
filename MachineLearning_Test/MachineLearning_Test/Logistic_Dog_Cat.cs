@@ -9,6 +9,15 @@ using Accord.MachineLearning.VectorMachines.Learning;
 using Accord.Statistics.Analysis;
 using Accord.Statistics.Models.Regression;
 
+using Encog.Neural.Networks ;
+using Encog.Neural.Networks.Layers;
+using Encog.Engine.Network.Activation;
+using Encog.ML.Data;
+using Encog.Neural.Networks.Training.Propagation.Resilient;
+using Encog.ML.Train;
+using Encog.ML.Data.Basic;
+using Encog;
+
 using OpenCvSharp;
 using OpenCvSharp.CPlusPlus;
 
@@ -76,16 +85,18 @@ namespace MachineLearning_Test
             Console.WriteLine("라벨링 완료");
 
             // 로지스틱 회귀분석
-            var learner = new ProbabilisticCoordinateDescent()
-            {
-                Tolerance = 1e-10,
-                Complexity = 1e+10,
-            };
-            Console.WriteLine("회귀분석 전처리 완료");
+            //var learner = new ProbabilisticCoordinateDescent()
+            //{
+            //    Tolerance = 1e-10,
+            //    Complexity = 1e+10,
+            //};
+            //Console.WriteLine("회귀분석 전처리 완료");
 
-            var svm = learner.Learn(inputs, outputs);
-            var regression = (LogisticRegression)svm;
-            Console.WriteLine("학습완료");
+            //var svm = learner.Learn(inputs, outputs);
+            //var regression = (LogisticRegression)svm;
+            //Console.WriteLine("학습완료");
+
+
 
             StreamWriter sw = new StreamWriter("data_result.csv", false, Encoding.UTF8);
             sw.WriteLine("id,label");
