@@ -28,14 +28,14 @@ namespace MachineLearning_Test
 
             string path_train = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\train\train";
             string path_test = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\test\test";
-            Bitmap[] bitmaps = new Bitmap[25000]; // 25000
-            Bitmap[] bitmaps_test = new Bitmap[12500]; // 12500
+            Bitmap[] bitmaps = new Bitmap[10000]; // 25000
+            Bitmap[] bitmaps_test = new Bitmap[5000]; // 12500
             byte[] temp01;
             double[] temp_2;
             List<double> temp_1 = new List<double>();
-            double[][] inputs = new double[25000][]; // 25000
-            double[][] tests = new double[12500][]; // 12500
-            double[] outputs = new double[25000]; // 25000
+            double[][] inputs = new double[10000][]; // 25000
+            double[][] tests = new double[5000][]; // 12500
+            double[] outputs = new double[10000]; // 25000
             OpenCvSharp.CPlusPlus.Size size = new OpenCvSharp.CPlusPlus.Size(50, 50); // 결국 사이즈를 타협했다 ㅠㅠ
 
             Processing_cat(path_train, bitmaps, size);
@@ -140,8 +140,7 @@ namespace MachineLearning_Test
         }
 
         static byte[] imageToByteArray(this System.Drawing.Bitmap image)
-        {
-            
+        {          
             using (var ms = new MemoryStream())
             {
                 Bitmap copy = new Bitmap(image);
@@ -163,68 +162,5 @@ namespace MachineLearning_Test
         //    temp_2 = temp_1.ToArray<double>();
     }
 
-    public class LogsiticRegression
-    {
-        double logistic(double x)
-        {
-              x = 1.0 / (1 + Math.Exp(x));
-            
-            return x;
-        }
-
-        double logistic_prime(double x)
-        {
-            x = logistic(x) * (1.0 - logistic(x)) ;
-            
-            return x;
-        }
-
-        // 전체 데이터의 likelihood
-        double logistic_log_likelihood(double[][] x, double[] y, double[] beta)
-        {
-            double likelihood =0;
-            for (int i = 0; i < x.Length; i++)
-            {
-                for(int cnt = 0; cnt < x[i].Length; cnt++)
-                {
-                    likelihood += logistic_log_likelihood_i(x, y, beta)[i][cnt];
-                }             
-            }
-            return likelihood;
-        }
-        // 각각 데이터의 likelihood 계산, 위의 메소드와 연계하여 전체 likelihood를 계산한다.
-        double[][] logistic_log_likelihood_i(double[][] x, double[] y, double[] beta)
-        {
-            for (int i = 0; i < x.Length; i++)
-            {
-                for(int cnt = 0; cnt<x[i].Length; cnt++)
-                {
-                    x[i][cnt] = x[i][cnt] * beta[i];
-                }               
-            }
-            for (int i = 0; i < x.Length; i++)
-            {
-                if (y[i] == 1)
-                {
-                    for (int cnt = 0; cnt < x[i].Length; cnt++) x[i][cnt] = Math.Log(logistic(x[i][cnt]));
-                }
-                else
-                {
-                    for (int cnt = 0; cnt < x[i].Length; cnt++) x[i][cnt] = Math.Log(1 - logistic(x[i][cnt]));
-                }
-            }
-            return x;
-        }
-
-        // i는 데이터 인덱스, j는 미분 인덱스
-        double[] logistic_log_partial_ij(double[][] x, double[] y, double[] beta)
-        {
-             (y - logistic(x * beta)) * x[j];
-            return 
-        }
-        double logistic_log_gradient_i(double x, double y, double[] beta)
-        {
-            return logistic_log_partial_ij(x,y,beta[j]) 
-        }
-    }
+    
 }
