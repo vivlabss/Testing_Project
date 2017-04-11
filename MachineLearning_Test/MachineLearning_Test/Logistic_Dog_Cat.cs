@@ -10,6 +10,7 @@ using Encog.Neural.Networks.Layers;
 using Encog.Engine.Network.Activation;
 using Encog.ML.Data;
 using Encog.ML.Data.Temporal;
+using Encog.Neural.Networks.Training.Propagation.Back;
 using Encog.Neural.Networks.Training.Propagation.Resilient;
 using Encog.Neural.Networks.Training.Propagation.Quick;
 using Encog.ML.Train;
@@ -43,7 +44,7 @@ namespace MachineLearning_Test
             double[][] inputs = new double[25000][]; // 25000
             double[][] tests = new double[12500][]; // 12500
             double[][] outputs = new double[25000][]; // 25000
-            OpenCvSharp.CPlusPlus.Size size = new OpenCvSharp.CPlusPlus.Size(50, 50); // 결국 사이즈를 타협했다 ㅠㅠ
+            OpenCvSharp.CPlusPlus.Size size = new OpenCvSharp.CPlusPlus.Size(40, 40); // 결국 사이즈를 타협했다 ㅠㅠ
 
             Processing_cat(path_train, bitmaps, size);
             Processing_dog(path_train, bitmaps, size);
@@ -57,6 +58,7 @@ namespace MachineLearning_Test
                 temp01.ToList<byte>().ForEach(b => temp_1.Add(Convert.ToDouble(b)));
                 temp_2 = temp_1.ToArray<double>();
                 inputs[i] = temp_2;
+                Console.WriteLine(temp_2.Length);
                 temp_1.Clear();
                 Console.WriteLine(i + "바이트 배열 전환 성공");
             }
@@ -83,7 +85,7 @@ namespace MachineLearning_Test
             Console.WriteLine("라벨링 완료");
 
             var network = new BasicNetwork();
-            network.AddLayer(new BasicLayer(null, true, 10054));
+            network.AddLayer(new BasicLayer(null, true, 6454));
             network.AddLayer(new BasicLayer(new ActivationSigmoid(), true, 3));
             network.AddLayer(new BasicLayer(new ActivationSigmoid(), false, 1));
        
@@ -92,7 +94,7 @@ namespace MachineLearning_Test
 
             IMLDataSet trainingSet = new BasicMLDataSet(inputs, outputs);
 
-            IMLTrain train = new ResilientPropagation(network, trainingSet);
+           IMLTrain train = new QuickPropagation(network, trainingSet);
 
             int epoch = 1;
 
