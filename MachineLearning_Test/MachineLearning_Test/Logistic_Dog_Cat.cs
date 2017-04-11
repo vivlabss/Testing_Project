@@ -9,6 +9,7 @@ using Encog.Neural.Networks;
 using Encog.Neural.Networks.Layers;
 using Encog.Engine.Network.Activation;
 using Encog.ML.Data;
+using Encog.ML.Data.Temporal;
 using Encog.Neural.Networks.Training.Propagation.Resilient;
 using Encog.Neural.Networks.Training.Propagation.Quick;
 using Encog.ML.Train;
@@ -34,14 +35,14 @@ namespace MachineLearning_Test
 
             string path_train = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\train\train";
             string path_test = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\test\test";
-            Bitmap[] bitmaps = new Bitmap[250]; // 25000
-            Bitmap[] bitmaps_test = new Bitmap[125]; // 12500
+            Bitmap[] bitmaps = new Bitmap[25000]; // 25000
+            Bitmap[] bitmaps_test = new Bitmap[12500]; // 12500
             byte[] temp01;
             double[] temp_2;
             List<double> temp_1 = new List<double>();
-            double[][] inputs = new double[250][]; // 25000
-            double[][] tests = new double[125][]; // 12500
-            double[][] outputs = new double[250][]; // 25000
+            double[][] inputs = new double[25000][]; // 25000
+            double[][] tests = new double[12500][]; // 12500
+            double[][] outputs = new double[25000][]; // 25000
             OpenCvSharp.CPlusPlus.Size size = new OpenCvSharp.CPlusPlus.Size(50, 50); // 결국 사이즈를 타협했다 ㅠㅠ
 
             Processing_cat(path_train, bitmaps, size);
@@ -104,24 +105,20 @@ namespace MachineLearning_Test
 
             train.FinishTraining();
 
-            Console.WriteLine(@"Neural Network Results");
-            foreach (IMLDataPair pair in trainingSet)
-            {
-                IMLData output = network.Compute(pair.Input);
-                Console.WriteLine(pair.Input[0] + @"," + pair.Input[1]
-                                  + @", actual=" + output[0] + @",ideal=" + pair.Ideal[0]);
-            }
-
-            EncogFramework.Instance.Shutdown();
-          
             StreamWriter sw = new StreamWriter("data_result.csv", false, Encoding.UTF8);
             sw.WriteLine("id,label");
 
+            Console.WriteLine(@"Neural Network Results");
+            
             for (int i = 0; i < tests.Length; i++)
             {
-                sw.WriteLine(i + "," + output[i][0]);
+                IMLData testSet = new BasicMLData(tests[i]);
+                IMLData output = network.Compute(testSet);
+                Console.WriteLine("actual=" + output[0]);
+                sw.WriteLine((i+1) + "," + output[0]);
             }
             sw.Close();
+            EncogFramework.Instance.Shutdown();
             Console.WriteLine("완료");
         }
 
