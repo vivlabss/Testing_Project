@@ -15,7 +15,7 @@ namespace MachineLearning_Test
             // H = 0.5 이면 GBM, H = 0 이면 평균회귀, H = 1 이면 추세성향
 
 
-            double[] raw_data = { 5, 4, 7, 5, 3, 2, 1, 5, 7, 5,7,8,6,5,1,2,3,5,7,8,5,7,8,9,5,4,2,3,8,9 }; // 향후 데이터를 입력받음
+            double[] raw_data = SqlCommandPrepare().ToArray(); // 향후 데이터를 입력받음
             double[] devi_raw_data = new double[raw_data.Length];
             double[] sums_devi = new double[raw_data.Length];
             double R = 0;
@@ -46,6 +46,39 @@ namespace MachineLearning_Test
 
             hurst = Math.Log(R / std) / Math.Log(raw_data.Length);
             Console.WriteLine(hurst);
+        }
+
+        static List<double> SqlCommandPrepare()
+        {
+            string connectionString = @"Data Source =.\SQLEXPRESS; Initial Catalog = Stock_Data; Integrated Security = True; Connect Timeout = 15; Encrypt = False; TrustServerCertificate = True; ApplicationIntent = ReadWrite; MultiSubnetFailover = False";
+            List<double> priceSet = new List<double>();
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    SqlCommand command = new SqlCommand(null, connection);
+
+                    command.CommandText =
+                        "SELECT PRICE_CLOSE FROM SK이노베이션 ORDER BY DATE ASC";
+
+                    command.ExecuteNonQuery();
+
+                    SqlDataReader dataReader = command.ExecuteReader();
+                    while (dataReader.Read())
+                    {
+                        priceSet.Add(Convert.ToDouble(dataReader["PRICE_CLOSE"].ToString()));
+                    }
+
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+
+            return priceSet;
         }
     }
 }
