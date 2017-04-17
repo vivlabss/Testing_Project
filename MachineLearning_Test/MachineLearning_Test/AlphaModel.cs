@@ -28,7 +28,7 @@ namespace MachineLearning_Test
     class DataSetting
     {
         List<string> companies = new List<string>();
-
+        
         // 입력형식 : tableName -> SK이노베이션, dateStart -> '2016-01-01'
         double[] trainPrepare(string tableName, string dateStart, string dateEnd)
         {
