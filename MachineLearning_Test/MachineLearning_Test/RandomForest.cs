@@ -20,7 +20,7 @@ namespace MachineLearning_Test
             double[] raw_data = set.ToArray();
             Console.WriteLine(raw_data.Length);
 
-            double[][] dataSet = new double[raw_data.Length][];
+            double[][] dataSet = new double[raw_data.Length - 1][];
             for (int i = 0; i < raw_data.Length - 1; i++)
             {
                 double temp = raw_data[i];
@@ -42,7 +42,7 @@ namespace MachineLearning_Test
 
             var teacher = new RandomForestLearning()
             {
-                NumberOfTrees = 10,
+                NumberOfTrees = 20,
             };
             var forest = teacher.Learn(dataSet, outputs);
             int[] predicted = forest.Decide(dataSet);
@@ -62,7 +62,7 @@ namespace MachineLearning_Test
                     SqlCommand command = new SqlCommand(null, connection);
 
                     command.CommandText =
-                        "SELECT PRICE_CLOSE FROM SK이노베이션 ORDER BY DATE ASC";
+                        "SELECT TOP 150 PRICE_CLOSE FROM SK이노베이션 ORDER BY DATE DESC";
 
                     command.ExecuteNonQuery();
 
