@@ -343,7 +343,7 @@ namespace MachineLearning_Test
 
     class Machine_Learning
     {
-        double[] knnTest(double[] raw_data, double[] raw_test)
+       double[] knnTest(double[] raw_data, double[] raw_test)
         {
 
             double[][] dataSet = new double[raw_data.Length - 1][];
