@@ -16,8 +16,10 @@ namespace MachineLearning_Test
     {
         static void Main(string[] args)
         {
-            List<double> set = SqlCommandPrepare();
+            List<double> set = trainPrepare();
+            List<double> tSet = testPrepare();
             double[] raw_data = set.ToArray();
+            double[] raw_test = tSet.ToArray();
             Console.WriteLine(raw_data.Length);
 
             double[][] dataSet = new double[raw_data.Length - 1][];
@@ -25,7 +27,14 @@ namespace MachineLearning_Test
             {
                 double temp = raw_data[i];
                 dataSet[i] = new double[] { temp };
-            } 
+            }
+
+            double[][] testSet = new double[raw_test.Length][];
+            for (int i = 0; i < raw_test.Length; i++)
+            {
+                double temp = raw_test[i];
+                testSet[i] = new double[] { temp };
+            }
 
             int[] outputs = new int[raw_data.Length - 1];
             for (int i = 0; i < raw_data.Length - 1; i++)
@@ -45,11 +54,11 @@ namespace MachineLearning_Test
                 NumberOfTrees = 20,
             };
             var forest = teacher.Learn(dataSet, outputs);
-            int[] predicted = forest.Decide(dataSet);
+            int[] predicted = forest.Decide(testSet);
             for(int i = 0; i < predicted.Length; i++) Console.WriteLine(predicted[i]);
         }
            
-        static List<double> SqlCommandPrepare()
+        static List<double> trainPrepare()
         {
             string connectionString = @"Data Source =.\SQLEXPRESS; Initial Catalog = Stock_Data; Integrated Security = True; Connect Timeout = 15; Encrypt = False; TrustServerCertificate = True; ApplicationIntent = ReadWrite; MultiSubnetFailover = False";
             List<double> priceSet = new List<double>();
@@ -62,7 +71,40 @@ namespace MachineLearning_Test
                     SqlCommand command = new SqlCommand(null, connection);
 
                     command.CommandText =
-                        "SELECT TOP 150 PRICE_CLOSE FROM SK이노베이션 ORDER BY DATE DESC";
+                        "SELECT PRICE_CLOSE FROM SK이노베이션 WHERE DATE BETWEEN '2016-01-01' AND '2016-12-31' ORDER BY DATE ASC";
+
+                    command.ExecuteNonQuery();
+
+                    SqlDataReader dataReader = command.ExecuteReader();
+                    while (dataReader.Read())
+                    {
+                        priceSet.Add(Convert.ToDouble(dataReader["PRICE_CLOSE"].ToString()));
+                    }
+
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+
+            return priceSet;
+        }
+
+        static List<double> testPrepare()
+        {
+            string connectionString = @"Data Source =.\SQLEXPRESS; Initial Catalog = Stock_Data; Integrated Security = True; Connect Timeout = 15; Encrypt = False; TrustServerCertificate = True; ApplicationIntent = ReadWrite; MultiSubnetFailover = False";
+            List<double> priceSet = new List<double>();
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    SqlCommand command = new SqlCommand(null, connection);
+
+                    command.CommandText =
+                        "SELECT PRICE_CLOSE FROM SK이노베이션 WHERE DATE BETWEEN '2017-01-01' AND '2017-03-01' ORDER BY DATE ASC";
 
                     command.ExecuteNonQuery();
 
