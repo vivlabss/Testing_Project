@@ -62,19 +62,27 @@ namespace MachineLearning_Test
                 try
                 {
                     connection.Open();
-                    SqlCommand command = new SqlCommand(null, connection);
+                    SqlCommand command = new SqlCommand("getStockData", connection);
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
 
-                    command.CommandText =
-                        "SELECT PRICE_CLOSE FROM SK이노베이션 WHERE DATE BETWEEN '2016-01-01' AND '2016-12-31' ORDER BY DATE ASC";
+                    SqlParameter param = new SqlParameter("@table_id", System.Data.SqlDbType.VarChar, 200);
+                    param.Value = "거북선1호";
+                    command.Parameters.Add(param);
+                    param = new SqlParameter("@dateStart", System.Data.SqlDbType.VarChar, 50);
+                    param.Value = "'2016-01-01'";
+                    command.Parameters.Add(param);
+                    param = new SqlParameter("@dateEnd", System.Data.SqlDbType.VarChar, 50);
+                    param.Value = "'2016-12-31'";
+                    command.Parameters.Add(param);
 
                     command.ExecuteNonQuery();
-
                     SqlDataReader dataReader = command.ExecuteReader();
+
                     while (dataReader.Read())
                     {
                         priceSet.Add(Convert.ToDouble(dataReader["PRICE_CLOSE"].ToString()));
                     }
-
+                    connection.Close();
                 }
                 catch
                 {
@@ -113,6 +121,7 @@ namespace MachineLearning_Test
                 {
                     throw;
                 }
+                connection.Close();
             }
 
             return priceSet;
