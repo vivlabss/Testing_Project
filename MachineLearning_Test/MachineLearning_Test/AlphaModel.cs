@@ -28,9 +28,13 @@ namespace MachineLearning_Test
     class DataSetting
     {
         List<string> companies = new List<string>();
+        double[][] x_train;                             // 학습시킬 주가 데이터
+        int[] y_train;                                  // 학습시킬 주가 데이터의 등락 여부
+        double[][] x_test;                              // 테스트할 데이터 셋
+        int[] y_test;                                   // 테스트할 데이터 셋의 등락 여부
         
         // 입력형식 : tableName -> SK이노베이션, dateStart -> '2016-01-01'
-        double[] trainPrepare(string tableName, string dateStart, string dateEnd)
+        double[] getDataPrepare(string tableName, string dateStart, string dateEnd)
         {
             string connectionString = @"Data Source =.\SQLEXPRESS; Initial Catalog = Stock_Data; Integrated Security = True; Connect Timeout = 15; Encrypt = False; TrustServerCertificate = True; ApplicationIntent = ReadWrite; MultiSubnetFailover = False";
             List<double> temp = new List<double>();
@@ -72,46 +76,34 @@ namespace MachineLearning_Test
             return priceSet;
         }
 
-        double[] testPrepare(string tableName, string dateStart, string dateEnd)
+        // x_train, x_test 데이터 : 위에서 받아온 데이터를 학습에 맞게 변환 
+        double[][] inputDataSetting(double[] train)
         {
-            string connectionString = @"Data Source =.\SQLEXPRESS; Initial Catalog = Stock_Data; Integrated Security = True; Connect Timeout = 15; Encrypt = False; TrustServerCertificate = True; ApplicationIntent = ReadWrite; MultiSubnetFailover = False";
-            List<double> temp = new List<double>();
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            double[][] dataSet = new double[train.Length - 1][];
+            for (int i = 0; i < train.Length - 1; i++)
             {
-                try
+                double temp = train[i];
+                dataSet[i] = new double[] { temp };
+            }
+            return dataSet;
+        }
+
+        // y_train, y_test 데이터 : 위에서 받아온 데이터의 등락여부 배열 반환
+        int[] outputDataSetting(double[] train)
+        {
+            int[] outputs = new int[train.Length - 1];
+            for (int i = 0; i < train.Length - 1; i++)
+            {
+                if (train[i + 1] - train[i] < 0)
                 {
-                    connection.Open();
-                    SqlCommand command = new SqlCommand("getStockData", connection);
-                    command.CommandType = System.Data.CommandType.StoredProcedure;
-
-                    SqlParameter param = new SqlParameter("@table_id", System.Data.SqlDbType.VarChar, 200);
-                    param.Value = tableName;
-                    command.Parameters.Add(param);
-                    param = new SqlParameter("@dateStart", System.Data.SqlDbType.VarChar, 50);
-                    param.Value = dateStart;
-                    command.Parameters.Add(param);
-                    param = new SqlParameter("@dateEnd", System.Data.SqlDbType.VarChar, 50);
-                    param.Value = dateEnd;
-                    command.Parameters.Add(param);
-
-                    command.ExecuteNonQuery();
-                    SqlDataReader dataReader = command.ExecuteReader();
-
-                    while (dataReader.Read())
-                    {
-                        temp.Add(Convert.ToDouble(dataReader["PRICE_CLOSE"].ToString()));
-                    }
-                    connection.Close();
+                    outputs[i] = 0;
                 }
-                catch
+                else
                 {
-                    throw;
+                    outputs[i] = 1;
                 }
             }
-            double[] priceSet = temp.ToArray();
-
-            return priceSet;
+            return outputs;
         }
 
         string downloadCode()
@@ -194,7 +186,6 @@ namespace MachineLearning_Test
             for (int i = 0; i < raw_data.Length - 2; i++) inputs[i] = new double[] { input_lag[i], input_diff_lag[i] };
             MultipleLinearRegression regression = olss.Learn(inputs, output_diff);
             for (int i = 0; i < raw_data.Length - 2; i++) predicted[i] = regression.Transform(inputs[i]);
-            Console.WriteLine(regression.Weights[0] + "\t" + regression.Weights[1]);
 
             // 음의 t-value보다 작거나 양의 t-value보다 크다면 정상시계열, 그렇지 않다면 랜덤과정이다.
             if ((raw_data.Length - 2) <= 25)
@@ -310,21 +301,6 @@ namespace MachineLearning_Test
             for (int i = 0; i < raw_data.Length - 1; i++) lag_raw_data[i] = raw_data[i + 1];
             for (int i = 0; i < raw_data.Length - 1; i++) outputs[i] = raw_data[i] - lag_raw_data[i];
 
-            //for (int i = 0; i < raw_data.Length - 1; i++)
-            //{
-            //    Console.Write(lag_raw_data[i] + "\t");
-            //}
-            //Console.WriteLine();
-            //for (int i = 0; i < raw_data.Length - 1; i++)
-            //{
-            //    Console.Write(raw_data[i] + "\t");
-            //}
-            //Console.WriteLine();
-            //for (int i = 0; i < raw_data.Length - 1; i++)
-            //{
-            //    Console.Write(outputs[i] + "\t");
-            //}
-            //Console.WriteLine();
             OrdinaryLeastSquares ols = new OrdinaryLeastSquares();
 
             SimpleLinearRegression regression = ols.Learn(lag_raw_data, outputs);
@@ -343,68 +319,14 @@ namespace MachineLearning_Test
 
     class Machine_Learning
     {
-       double[] knnTest(double[] raw_data, double[] raw_test)
-        {
-
-            double[][] dataSet = new double[raw_data.Length - 1][];
-            for (int i = 0; i < raw_data.Length - 1; i++)
-            {
-                double temp = raw_data[i];
-                dataSet[i] = new double[] { temp };
-            }
-
-            double[][] testSet = new double[raw_test.Length][];
-            for (int i = 0; i < raw_test.Length; i++)
-            {
-                double temp = raw_test[i];
-                testSet[i] = new double[] { temp };
-            }
-
-            int[] outputs = new int[raw_data.Length - 1];
-            for (int i = 0; i < raw_data.Length - 1; i++)
-            {
-                if (raw_data[i + 1] - raw_data[i] < 0)
-                {
-                    outputs[i] = 0;
-                }
-                else
-                {
-                    outputs[i] = 1;
-                }
-            }
-
-            KNearestNeighbors knn = new KNearestNeighbors(k: 3, classes: 2, inputs: dataSet, outputs: outputs);
-            return;
+        KNearestNeighbors knnTest(double[][] x_train, int[] y_train)
+        {   
+            KNearestNeighbors knn = new KNearestNeighbors(k: 3, classes: 2, inputs: x_train, outputs: y_train);
+            return knn;
         }
 
-       double[] logisticTest(double[] raw_data, double[] raw_test)
+        LogisticRegression logisticTest(double[][] x_train, int[] y_train)
         {
-            double[][] dataSet = new double[raw_data.Length - 1][];
-            for (int i = 0; i < raw_data.Length - 1; i++)
-            {
-                double temp = raw_data[i];
-                dataSet[i] = new double[] { temp };
-            }
-
-            double[][] testSet = new double[raw_test.Length][];
-            for (int i = 0; i < raw_test.Length; i++)
-            {
-                double temp = raw_test[i];
-                testSet[i] = new double[] { temp };
-            }
-
-            int[] outputs = new int[raw_data.Length - 1];
-            for (int i = 0; i < raw_data.Length - 1; i++)
-            {
-                if (raw_data[i + 1] - raw_data[i] < 0)
-                {
-                    outputs[i] = 0;
-                }
-                else
-                {
-                    outputs[i] = 1;
-                }
-            }
             //로지스틱이 train 데이터 스케일에 훨씬 더 민감하다.
             var teacher = new ProbabilisticCoordinateDescent()
             {
@@ -412,47 +334,20 @@ namespace MachineLearning_Test
                 Complexity = 1e+10,
             };
 
-            var svm = teacher.Learn(dataSet, outputs);
+            var svm = teacher.Learn(x_train, y_train);
 
             var regression = (LogisticRegression)svm;
-            return;
+            return regression;
         }
 
-       double[] randomforestTest(double[] raw_data, double[] raw_test)
+        Accord.MachineLearning.DecisionTrees.RandomForest randomforestTest(double[][] x_train, int[] y_train)
         {
-            double[][] dataSet = new double[raw_data.Length - 1][];
-            for (int i = 0; i < raw_data.Length - 1; i++)
-            {
-                double temp = raw_data[i];
-                dataSet[i] = new double[] { temp };
-            }
-
-            double[][] testSet = new double[raw_test.Length][];
-            for (int i = 0; i < raw_test.Length; i++)
-            {
-                double temp = raw_test[i];
-                testSet[i] = new double[] { temp };
-            }
-
-            int[] outputs = new int[raw_data.Length - 1];
-            for (int i = 0; i < raw_data.Length - 1; i++)
-            {
-                if (raw_data[i + 1] - raw_data[i] < 0)
-                {
-                    outputs[i] = 0;
-                }
-                else
-                {
-                    outputs[i] = 1;
-                }
-            }
-
             var teacher = new RandomForestLearning()
             {
                 NumberOfTrees = 20,
             };
-            var forest = teacher.Learn(dataSet, outputs);
-            return;
+            var forest = teacher.Learn(x_train, y_train);
+            return forest;
         }
     }
 }
