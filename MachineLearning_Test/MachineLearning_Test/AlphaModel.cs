@@ -51,7 +51,33 @@ namespace MachineLearning_Test
 
             return result;
         }
-        
+
+        public string determinePosition_ML(KNearestNeighbors knn, LogisticRegression logistic, Accord.MachineLearning.DecisionTrees.RandomForest forest, double[][] x_test, int row_idx, bool print)
+        {
+            string result;
+            int prediction_result = 0;
+
+            if (row_idx - 1 < 0)
+            {
+                return result = "HOLD";
+            }
+
+            prediction_result += knn.Compute(x_test[row_idx]);
+            if (logistic.Decide(x_test[row_idx]))
+            {
+                prediction_result += knn.Compute(x_test[row_idx]);
+            }
+            prediction_result += forest.Decide(x_test[row_idx]);
+
+            if(prediction_result > 1)
+            {
+                return result = "LONG";
+            }else
+            {
+                return result = "SHORT";
+            }
+
+        }
     }
 
     public class DataSetting
