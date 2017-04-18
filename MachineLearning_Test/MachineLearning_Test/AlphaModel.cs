@@ -16,6 +16,11 @@ namespace MachineLearning_Test
 {
     public class AlphaModel
     {
+        public string determinePosition(double [] movingAverage, double [] x_test)
+        {
+
+        }
+        
     }
 
     public class DataSetting
@@ -308,6 +313,17 @@ namespace MachineLearning_Test
             lifeTime = (Math.Log(2) / mean_reversion_speed);
             Console.WriteLine("Half Life : " + lifeTime);
             return lifeTime;
+        }
+
+        public double[] calcMovingAverage(double[] raw_Data)
+        {
+            double[] movingAverage = new double[raw_Data.Length - 2];
+            for(int idx = 0; idx < raw_Data.Length -2; idx++)
+            {
+                movingAverage[idx] = (raw_Data[idx] + raw_Data[idx + 1] + raw_Data[idx + 2]) / 3;
+            }
+
+            return movingAverage;
         }
     }
 
