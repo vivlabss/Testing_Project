@@ -16,9 +16,40 @@ namespace MachineLearning_Test
 {
     public class AlphaModel
     {
-        public string determinePosition(double [] movingAverage, double [] x_test)
+        // 이동평균 입력값과 테스트 데이터의 길이가 같아야함
+        public string determinePosition_MA(double [] movingAverage, double [] x_test, int row_idx, bool print)
         {
+            double ma_mean = 0, ma_std = 0;
+            double price_arbitrage = 0;
+            string result = "HOLD";
 
+            for (int idx = 0; idx < movingAverage.Length; idx++) ma_mean += movingAverage[idx];
+            ma_mean /= movingAverage.Length;
+            for (int idx = 0; idx < movingAverage.Length; idx++) ma_std += Math.Pow((movingAverage[idx] - ma_mean), 2);
+            ma_std /= movingAverage.Length;
+            ma_std = Math.Sqrt(ma_std);
+
+            price_arbitrage = x_test[row_idx] - movingAverage[row_idx];           
+
+            if (print)
+            {
+                Console.WriteLine("diff: " + price_arbitrage + "\tprice: " + x_test[row_idx] + "\tmoving_average: "
+                    + movingAverage[row_idx] + "\tmoving_average_std: " + ma_std);
+            }
+
+            if(Math.Abs(price_arbitrage) > ma_std * 0.5)
+            {
+                if(price_arbitrage > 0)
+                {
+                    return result = "LONG";
+                }
+                else
+                {
+                    return result = "SHORT";
+                }
+            }
+
+            return result;
         }
         
     }
@@ -372,5 +403,7 @@ namespace MachineLearning_Test
             hitRatio = hit / len;
             return hitRatio;
         }
+
+
     }
 }
