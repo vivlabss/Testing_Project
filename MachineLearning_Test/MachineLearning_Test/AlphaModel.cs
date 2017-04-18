@@ -1,40 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Collections.Specialized;
-using System.Data;
 using System.Data.SqlClient;
 
-using Accord;
-using Accord.Math;
-using Accord.Statistics;
 using Accord.Statistics.Models.Regression;
 using Accord.Statistics.Models.Regression.Linear;
 using Accord.MachineLearning;
 using Accord.MachineLearning.VectorMachines.Learning;
-using Accord.MachineLearning.DecisionTrees.Learning;
 using Accord.MachineLearning.DecisionTrees;
 
 namespace MachineLearning_Test
 {
-    class AlphaModel
+    public class AlphaModel
     {
     }
 
-    class DataSetting
+    public class DataSetting
     {
-        List<string> companies = new List<string>();
-        double[][] x_train;                             // 학습시킬 주가 데이터
-        int[] y_train;                                  // 학습시킬 주가 데이터의 등락 여부
-        double[][] x_test;                              // 테스트할 데이터 셋
-        int[] y_test;                                   // 테스트할 데이터 셋의 등락 여부
-        
+        public List<string> companies = new List<string>();
+        public double[][] x_train;                             // 학습시킬 주가 데이터
+        public int[] y_train;                                  // 학습시킬 주가 데이터의 등락 여부
+        public double[][] x_test;                              // 테스트할 데이터 셋
+        public int[] y_test;                                   // 테스트할 데이터 셋의 등락 여부
+
         // 입력형식 : tableName -> SK이노베이션, dateStart -> '2016-01-01'
-        double[] getDataPrepare(string tableName, string dateStart, string dateEnd)
+        public double[] getDataPrepare(string tableName, string dateStart, string dateEnd)
         {
             string connectionString = @"Data Source =.\SQLEXPRESS; Initial Catalog = Stock_Data; Integrated Security = True; Connect Timeout = 15; Encrypt = False; TrustServerCertificate = True; ApplicationIntent = ReadWrite; MultiSubnetFailover = False";
             List<double> temp = new List<double>();
@@ -77,7 +70,7 @@ namespace MachineLearning_Test
         }
 
         // x_train, x_test 데이터 : 위에서 받아온 데이터를 학습에 맞게 변환 
-        double[][] inputDataSetting(double[] train)
+        public double[][] inputDataSetting(double[] train)
         {
             double[][] dataSet = new double[train.Length - 1][];
             for (int i = 0; i < train.Length - 1; i++)
@@ -89,7 +82,7 @@ namespace MachineLearning_Test
         }
 
         // y_train, y_test 데이터 : 위에서 받아온 데이터의 등락여부 배열 반환
-        int[] outputDataSetting(double[] train)
+        public int[] outputDataSetting(double[] train)
         {
             int[] outputs = new int[train.Length - 1];
             for (int i = 0; i < train.Length - 1; i++)
@@ -106,7 +99,7 @@ namespace MachineLearning_Test
             return outputs;
         }
 
-        string downloadCode()
+        public string downloadCode()
         {
             string url = "http://datamall.koscom.co.kr/servlet/infoService/SearchIssue";
             using (WebClient client = new WebClient())
@@ -130,7 +123,7 @@ namespace MachineLearning_Test
         }
 
         // downloadCode() 결과를 parseCodeHtml에 인수로 넣어줘야 한다 !
-        void parseCodeHtml(string html)
+        public List<string> parseCodeHtml(string html)
         {
             Regex firstRegex = new Regex("<option value=\"KR.*\">.*?</option>");
             Match firstMatch = firstRegex.Match(html);
@@ -149,12 +142,13 @@ namespace MachineLearning_Test
                 }
                 this.companies.Add(sr); // 회사이름 리스트에 삽입
             }
+            return this.companies;
         }
     }
 
-    class Mean_Reversion
+    public class Mean_Reversion
     {
-        string[] adfTest(double[] raw_data)
+        public string[] adfTest(double[] raw_data)
         {
             double[] diff_raw_data = new double[raw_data.Length - 1];
             double[] lag_raw_data = new double[raw_data.Length - 1];
@@ -219,7 +213,7 @@ namespace MachineLearning_Test
             return result;
         }
 
-        double[] Calc_T(double[][] input, double[] output, double[] predict, MultipleLinearRegression regression)
+        public double[] Calc_T(double[][] input, double[] output, double[] predict, MultipleLinearRegression regression)
         {
             double std1 = 0, std2 = 0, error = 0;
             double xMean1 = 0, xMean2 = 0;
@@ -257,7 +251,7 @@ namespace MachineLearning_Test
             return tScore;
         }
 
-        double hurstTest(double[] raw_data)
+        public double hurstTest(double[] raw_data)
         {
             double[] devi_raw_data = new double[raw_data.Length];
             double[] sums_devi = new double[raw_data.Length];
@@ -291,7 +285,7 @@ namespace MachineLearning_Test
             return hurst;
         }
 
-        double halflifeTest(double[] raw_data)
+        public double halflifeTest(double[] raw_data)
         {
             double[] lag_raw_data = new double[raw_data.Length - 1];
             double[] outputs = new double[raw_data.Length - 1];
@@ -317,15 +311,15 @@ namespace MachineLearning_Test
         }
     }
 
-    class Machine_Learning
+    public class Machine_Learning
     {
-        KNearestNeighbors knnTest(double[][] x_train, int[] y_train)
+        public KNearestNeighbors knnTest(double[][] x_train, int[] y_train)
         {   
             KNearestNeighbors knn = new KNearestNeighbors(k: 3, classes: 2, inputs: x_train, outputs: y_train);
             return knn;
         }
 
-        LogisticRegression logisticTest(double[][] x_train, int[] y_train)
+        public LogisticRegression logisticTest(double[][] x_train, int[] y_train)
         {
             //로지스틱이 train 데이터 스케일에 훨씬 더 민감하다.
             var teacher = new ProbabilisticCoordinateDescent()
@@ -340,7 +334,7 @@ namespace MachineLearning_Test
             return regression;
         }
 
-        Accord.MachineLearning.DecisionTrees.RandomForest randomforestTest(double[][] x_train, int[] y_train)
+        public Accord.MachineLearning.DecisionTrees.RandomForest randomforestTest(double[][] x_train, int[] y_train)
         {
             var teacher = new RandomForestLearning()
             {
@@ -348,6 +342,19 @@ namespace MachineLearning_Test
             };
             var forest = teacher.Learn(x_train, y_train);
             return forest;
+        }
+
+        public double calcHitRatio(double[] predict, double[] output_test)
+        {
+            double hitRatio;
+            int len = output_test.Length;
+            int hit = 0;
+            for(int idx = 0; idx < output_test.Length; )
+            {
+                if (predict[idx] == output_test[idx]) hit += 1;
+            }
+            hitRatio = hit / len;
+            return hitRatio;
         }
     }
 }
