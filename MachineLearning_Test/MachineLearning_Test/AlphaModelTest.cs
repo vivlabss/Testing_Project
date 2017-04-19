@@ -159,11 +159,11 @@ namespace MachineLearning_Test
                         Console.WriteLine("예측치 처리 완료");
                     }
 
-                    knnHitRatio[idx] = c.calcHitRatio(predict_knn, test_output);
+                    knnHitRatio[idx] = (double)c.calcHitRatio(predict_knn, test_output);
                     Console.WriteLine("knn 성공");
-                    logisticHitRatio[idx] = c.calcHitRatio(predict_logistic, test_output);
+                    logisticHitRatio[idx] = (double)c.calcHitRatio(predict_logistic, test_output);
                     Console.WriteLine("로지스틱 성공");
-                    forestHitRatio[idx] = c.calcHitRatio(predict_forest, test_output);
+                    forestHitRatio[idx] = (double)c.calcHitRatio(predict_forest, test_output);
                     Console.WriteLine("랜덤 포레스트 성공");
 
                 }
@@ -173,6 +173,7 @@ namespace MachineLearning_Test
                 }
 
             }    // 학습 진행
+
 
 
         }

@@ -437,8 +437,8 @@ namespace MachineLearning_Test
         public double calcHitRatio(int[] predict, int[] output_test)
         {
             double hitRatio;
-            int len = output_test.Length;
-            int hit = 0;
+            double len = output_test.Length;
+            double hit = 0;
             for(int idx = 0; idx < output_test.Length; idx++)
             {
                 if (predict[idx] == output_test[idx]) hit += 1;
