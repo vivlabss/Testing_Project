@@ -5,25 +5,17 @@ using System.Text;
 using System.IO;
 using System.Drawing;
 
-using Encog.Neural.Networks;
-using Encog.Neural.Networks.Layers;
-using Encog.Engine.Network.Activation;
-using Encog.ML.Data;
-using Encog.ML.Data.Temporal;
-using Encog.Neural.Networks.Training.Propagation.Back;
-using Encog.Neural.Networks.Training.Propagation.Resilient;
-using Encog.Neural.Networks.Training.Propagation.Quick;
-using Encog.ML.Train;
-using Encog.ML.Data.Basic;
-using Encog;
+using AForge.Neuro.Learning;
+using AForge.Neuro;
+using AForge.Math;
 
 using OpenCvSharp;
 using OpenCvSharp.CPlusPlus;
 
 namespace MachineLearning_Test
 {
-    static class Logistic_Dog_Cat
-    {      
+    static class Logistic_Dog_Cat_Aforge
+    {
         static void Main(string[] args)
         {
 
@@ -79,58 +71,48 @@ namespace MachineLearning_Test
             for (int i = 0; i < (outputs.Length / 2); i++)
             {
                 outputs[i] = new double[] { 0 };
-                outputs[i + (outputs.Length/2)] = new double[] { 1 };
+                outputs[i + (outputs.Length / 2)] = new double[] { 1 };
             }
-   
+
             Console.WriteLine("라벨링 완료");
 
-            var network = new BasicNetwork();
-            network.AddLayer(new BasicLayer(null, true, 4150));
-            network.AddLayer(new BasicLayer(new ActivationSigmoid(), true, 3));
-            network.AddLayer(new BasicLayer(new ActivationSigmoid(), false, 1));
-       
-            network.Structure.FinalizeStructure();
-            network.Reset();
+            ActivationNetwork network = new ActivationNetwork(
+                new SigmoidFunction(0.1),
+                4150,             
+                1);
 
-            IMLDataSet trainingSet = new BasicMLDataSet(inputs, outputs);
-
-           IMLTrain train = new Backpropagation(network, trainingSet);
-
-            int epoch = 1;
-
-            do
+            //AForge.Neuro.Learning.BackPropagationLearning
+           PerceptronLearning teacher = new PerceptronLearning(network);
+            while (true)
             {
-                train.Iteration();
-                Console.WriteLine(@"Epoch #" + epoch + @"Error:" + train.Error);
-                epoch++;
-            } while (train.Error > 0.05);
+                double error = teacher.RunEpoch(inputs, outputs);
+                Console.WriteLine(error);
+                if (error < 1) break;
+            }
 
-            train.FinishTraining();
-
+           
             StreamWriter sw = new StreamWriter("data_result.csv", false, Encoding.UTF8);
             sw.WriteLine("id,label");
 
             Console.WriteLine(@"Neural Network Results");
-            
+
             for (int i = 0; i < tests.Length; i++)
             {
-                IMLData testSet = new BasicMLData(tests[i]);
-                IMLData output = network.Compute(testSet);
-                Console.WriteLine("actual=" + output[0]);
-                sw.WriteLine((i+1) + "," + output[0]);
+                double[] netout = network.Compute(tests[i]);
+                Console.WriteLine("actual=" + netout[0]);
+                sw.WriteLine((i + 1) + "," + netout[0]);
             }
-            sw.Close();
-            EncogFramework.Instance.Shutdown();
+            sw.Close();           
             Console.WriteLine("완료");
         }
 
         private static void Processing_dog(string path_train, Bitmap[] bitmaps, OpenCvSharp.CPlusPlus.Size size)
         {
 
-            for (int i = 0; i < (bitmaps.Length/2); i++)
+            for (int i = 0; i < (bitmaps.Length / 2); i++)
             {
                 Mat mat_dog = Cv2.ImRead(path_train + @"\dog." + i + ".jpg", LoadMode.Color);
-                mat_dog = mat_dog.Resize(size,0,0,Interpolation.Linear);
+                mat_dog = mat_dog.Resize(size, 0, 0, Interpolation.Linear);
                 bitmaps[i + (bitmaps.Length / 2)] = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(mat_dog);
                 Console.WriteLine(path_train + @"\dog." + i + ".jpg", LoadMode.Color);
                 mat_dog.Dispose();
@@ -140,7 +122,7 @@ namespace MachineLearning_Test
 
         private static void Processing_cat(string path_train, Bitmap[] bitmaps, OpenCvSharp.CPlusPlus.Size size)
         {
-            for (int i = 0; i < bitmaps.Length/2; i++)
+            for (int i = 0; i < bitmaps.Length / 2; i++)
             {
                 Mat mat_cat = Cv2.ImRead(path_train + @"\cat." + i + ".jpg", LoadMode.Color);
                 mat_cat = mat_cat.Resize(size, 0, 0, Interpolation.Linear);
@@ -155,10 +137,10 @@ namespace MachineLearning_Test
         {
             for (int i = 0; i < bitmaps.Length; i++)
             {
-                Mat mat_test = Cv2.ImRead(path_test + @"\" + (i+1) + ".jpg", LoadMode.Color);
+                Mat mat_test = Cv2.ImRead(path_test + @"\" + (i + 1) + ".jpg", LoadMode.Color);
                 mat_test = mat_test.Resize(size, 0, 0, Interpolation.Linear);
                 bitmaps[i] = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(mat_test);
-                Console.WriteLine(path_test + @"\"+ (i+1) + ".jpg", LoadMode.Color);
+                Console.WriteLine(path_test + @"\" + (i + 1) + ".jpg", LoadMode.Color);
                 mat_test.Dispose();
                 mat_test = null;
 
@@ -166,7 +148,7 @@ namespace MachineLearning_Test
         }
 
         static byte[] imageToByteArray(this System.Drawing.Bitmap image)
-        {          
+        {
             using (var ms = new MemoryStream())
             {
                 Bitmap copy = new Bitmap(image);
@@ -200,5 +182,5 @@ namespace MachineLearning_Test
         //Console.WriteLine("학습완료");
     }
 
-    
+
 }
