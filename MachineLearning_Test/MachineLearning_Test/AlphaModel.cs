@@ -361,7 +361,7 @@ namespace MachineLearning_Test
         {
             double[] lag_raw_data = new double[raw_data.Length - 1];
             double[] outputs = new double[raw_data.Length - 1];
-            double lifeTime;
+            double lifeTime = 0;
             double mean_reversion_speed;
 
             for (int i = 0; i < raw_data.Length - 1; i++) lag_raw_data[i] = raw_data[i + 1];
@@ -371,14 +371,21 @@ namespace MachineLearning_Test
 
             SimpleLinearRegression regression = ols.Learn(lag_raw_data, outputs);
             mean_reversion_speed = regression.Slope;
-            Console.WriteLine("slope : " + mean_reversion_speed);
+            // Console.WriteLine("slope : " + mean_reversion_speed);
 
 
             mean_reversion_speed = -1 * Math.Log(1 + mean_reversion_speed);
-            Console.WriteLine("mean_reversion_speed : " + mean_reversion_speed);
-
-            lifeTime = (Math.Log(2) / mean_reversion_speed);
-            Console.WriteLine("Half Life : " + lifeTime);
+            // Console.WriteLine("mean_reversion_speed : " + mean_reversion_speed);
+            try
+            {
+                lifeTime = (Math.Log(2) / mean_reversion_speed);
+            }
+            catch
+            {
+                throw;
+            }
+           
+            //Console.WriteLine("Half Life : " + lifeTime);
             return lifeTime;
         }
 
@@ -427,7 +434,7 @@ namespace MachineLearning_Test
             return forest;
         }
 
-        public double calcHitRatio(double[] predict, double[] output_test)
+        public double calcHitRatio(int[] predict, int[] output_test)
         {
             double hitRatio;
             int len = output_test.Length;
