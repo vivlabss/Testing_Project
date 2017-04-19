@@ -31,22 +31,22 @@ namespace MachineLearning_Test
 
             price_arbitrage = x_test[row_idx] - movingAverage[row_idx];           
 
-            if (print)
-            {
-                Console.WriteLine("diff: " + price_arbitrage + "\tprice: " + x_test[row_idx] + "\tmoving_average: "
-                    + movingAverage[row_idx] + "\tmoving_average_std: " + ma_std);
-            }
-
             if(Math.Abs(price_arbitrage) > ma_std * 0.5)
             {
                 if(price_arbitrage > 0)
                 {
-                    return result = "LONG";
+                    result = "SHORT";
                 }
                 else
                 {
-                    return result = "SHORT";
+                    result = "LONG";
                 }
+            }
+
+            if (print)
+            {
+                Console.WriteLine("\ndiff: " + price_arbitrage + "\nprice: " + x_test[row_idx] + "\nmoving_average: "
+                    + movingAverage[row_idx] + "\nmoving_average_std: " + ma_std + "\nDecision : " + result);
             }
 
             return result;
@@ -54,12 +54,12 @@ namespace MachineLearning_Test
 
         public string determinePosition_ML(KNearestNeighbors knn, LogisticRegression logistic, Accord.MachineLearning.DecisionTrees.RandomForest forest, double[][] x_test, int row_idx, bool print)
         {
-            string result;
+            string result = "HOLD";
             int prediction_result = 0;
 
             if (row_idx - 1 < 0)
             {
-                return result = "HOLD";
+                result = "HOLD";
             }
 
             prediction_result += knn.Compute(x_test[row_idx]);
@@ -71,13 +71,23 @@ namespace MachineLearning_Test
 
             if(prediction_result > 1)
             {
-                return result = "LONG";
+                result = "LONG";
             }else
             {
-                return result = "SHORT";
+                result = "SHORT";
             }
 
+            if (print)
+            {
+                Console.WriteLine("\nknn : " + knn.Compute(x_test[row_idx]) + "\nlogistic : " +logistic.Decide(x_test[row_idx]) + "\nforest : " + forest.Decide(x_test[row_idx]) + "\nDecision : " + result);
+            }
+
+            return result;
+
         }
+
+
+
     }
 
     public class DataSetting
