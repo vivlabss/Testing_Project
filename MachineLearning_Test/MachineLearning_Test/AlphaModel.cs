@@ -439,7 +439,7 @@ namespace MachineLearning_Test
             double hitRatio;
             int len = output_test.Length;
             int hit = 0;
-            for(int idx = 0; idx < output_test.Length; )
+            for(int idx = 0; idx < output_test.Length; idx++)
             {
                 if (predict[idx] == output_test[idx]) hit += 1;
             }

@@ -139,21 +139,24 @@ namespace MachineLearning_Test
                     double[][] test_input = a.inputDataSetting(raw_test_data[idx]);
                     int[] test_output = a.outputDataSetting(raw_test_data[idx]);
 
+                    int len = test_input.Length;
+
                     int[] predict_knn = new int[test_input.Length];
                     int[] predict_logistic = new int[test_input.Length];
                     int[] predict_forest = new int[test_input.Length];
 
                     knn[idx] = c.knnTest(train_input, train_output);
                     logistic[idx] = c.logisticTest(train_input, train_output);
-                    forest[idx] = c.randomforestTest(train_input, train_output);
+                    forest[idx] = c.randomforestTest(train_input, train_output);                
 
                     Console.WriteLine("학습성공");
 
-                    for (int cnt = 0; cnt < test_input.Length; cnt++)
+                    for (int cnt = 0; cnt < len; cnt++)
                     {
-                        predict_logistic[cnt] = logistic[idx].Decide(test_input)[cnt] == true ? 1 : 0;
                         predict_knn[cnt] = knn[idx].Compute(test_input[cnt]);
+                        predict_logistic[cnt] = logistic[idx].Decide(test_input)[cnt] == true ? 1 : 0;
                         predict_forest[cnt] = forest[idx].Decide(test_input[cnt]);
+                        Console.WriteLine("예측치 처리 완료");
                     }
 
                     knnHitRatio[idx] = c.calcHitRatio(predict_knn, test_output);
