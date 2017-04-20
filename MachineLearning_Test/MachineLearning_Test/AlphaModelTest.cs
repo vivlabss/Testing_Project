@@ -48,7 +48,7 @@ namespace MachineLearning_Test
             {
                 try
                 {
-                    raw_train_data[idx] = a.getDataPrepare(companyNames[idx], "'2016-01-01'", "'2016-12-31'");
+                    raw_train_data[idx] = a.getDataPrepare(companyNames[idx], "'2016-06-01'", "'2016-12-31'");
                     Console.WriteLine(companyNames[idx] + " 성공!");
                 }
                 catch
@@ -152,6 +152,68 @@ namespace MachineLearning_Test
                 }
 
             }   // 학습 진행
+
+            Console.WriteLine("\n\nADF");
+            for (int idx = 0; idx < companyNames.Count; idx++)
+            {
+                try
+                {
+                    if (Convert.ToDouble(adfScore[idx][0]) < -3.5)
+                    {
+                        Console.Write(companyNames[idx] + "\t");
+                    }
+                }
+                catch
+                {
+                    
+                }
+
+            }
+
+            Console.WriteLine("\n\nHurst");
+            for (int idx = 0; idx < companyNames.Count; idx++)
+            {              
+                if (hurstScore[idx] < 0.5 && hurstScore[idx] > 0)
+                {
+                    Console.Write(companyNames[idx] + "\t");
+                }
+            }
+
+            Console.WriteLine("\n\nHalfLife");
+            for (int idx = 0; idx < companyNames.Count; idx++)
+            {
+                if (halfLifeScore[idx] < 30 && halfLifeScore[idx] >10)
+                {
+                    Console.Write(companyNames[idx] + "\t");
+                }
+            }
+
+            Console.WriteLine("\n\n로지스틱");
+            for(int idx = 0; idx < companyNames.Count; idx++)
+            {
+                if(logisticHitRatio[idx] == 1)
+                {
+                    Console.Write(companyNames[idx] + "\t");
+                }
+            }
+
+            Console.WriteLine("\n\nKNN");
+            for (int idx = 0; idx < companyNames.Count; idx++)
+            {
+                if (knnHitRatio[idx] == 1)
+                {
+                    Console.Write(companyNames[idx] + "\t");
+                }
+            }
+
+            Console.WriteLine("\n\nForest");
+            for (int idx = 0; idx < companyNames.Count; idx++)
+            {
+                if (forestHitRatio[idx] == 1)
+                {
+                    Console.Write(companyNames[idx] + "\t");
+                }
+            }
 
         }
     }
