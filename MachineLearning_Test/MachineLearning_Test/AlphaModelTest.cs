@@ -24,17 +24,17 @@ namespace MachineLearning_Test
             double[][] raw_train_data = new double[companyNames.Count][];
             double[][] raw_test_data = new double[companyNames.Count][];
 
-            string[][] adfScore = new string[companyNames.Count][];
+            string[][] adfScore = new string[companyNames.Count][]; 
             double[] hurstScore = new double[companyNames.Count];
-            double[] halfLife = new double[companyNames.Count];
+            double[] halfLifeScore = new double[companyNames.Count];
 
-            int[] rankAdf = new int[companyNames.Count]; for (int idx = 0; idx < rankAdf.Length; idx++) rankAdf[idx] = 1;
+            int[] rankAdf = new int[companyNames.Count]; for (int idx = 0; idx < rankAdf.Length; idx++) rankAdf[idx] = 1; 
             int[] rankHurst = new int[companyNames.Count]; for (int idx = 0; idx < rankAdf.Length; idx++) rankHurst[idx] = 1;
             int[] rankHalfLife = new int[companyNames.Count]; for (int idx = 0; idx < rankAdf.Length; idx++) rankHalfLife[idx] = 1;
 
-            double[] knnHitRatio = new double[companyNames.Count];
-            double[] logisticHitRatio = new double[companyNames.Count];
-            double[] forestHitRatio = new double[companyNames.Count];
+            double[] knnHitRatio = new double[companyNames.Count]; 
+            double[] logisticHitRatio = new double[companyNames.Count]; 
+            double[] forestHitRatio = new double[companyNames.Count]; 
 
             int[] rankKnn = new int[companyNames.Count]; for (int idx = 0; idx < rankAdf.Length; idx++) rankKnn[idx] = 1;
             int[] rankLogistic = new int[companyNames.Count]; for (int idx = 0; idx < rankAdf.Length; idx++) rankLogistic[idx] = 1;
@@ -100,7 +100,7 @@ namespace MachineLearning_Test
             {
                 try
                 {
-                    halfLife[idx] = b.halflifeTest(raw_train_data[idx]);
+                    halfLifeScore[idx] = b.halflifeTest(raw_train_data[idx]);
                     Console.WriteLine("halflife 계산 완료");
                 }
                 catch
