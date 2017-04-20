@@ -5,10 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Accord.Statistics.Models.Regression;
-using Accord.Statistics.Models.Regression.Linear;
 using Accord.MachineLearning;
-using Accord.MachineLearning.VectorMachines.Learning;
-using Accord.MachineLearning.DecisionTrees;
 
 namespace MachineLearning_Test
 {
@@ -21,9 +18,9 @@ namespace MachineLearning_Test
             Machine_Learning c = new Machine_Learning();
             AlphaModel d = new AlphaModel();
 
-            List<string> companyNames = a.parseCodeHtml(a.downloadCode());
-
             // 회사이름을 바탕으로 데이터들을 처리 및 순위 결정하여 출력
+            List<string> companyNames = a.parseCodeHtml(a.downloadCode());
+         
             double[][] raw_train_data = new double[companyNames.Count][];
             double[][] raw_test_data = new double[companyNames.Count][];
 
@@ -31,9 +28,17 @@ namespace MachineLearning_Test
             double[] hurstScore = new double[companyNames.Count];
             double[] halfLife = new double[companyNames.Count];
 
+            int[] rankAdf = new int[companyNames.Count]; for (int idx = 0; idx < rankAdf.Length; idx++) rankAdf[idx] = 1;
+            int[] rankHurst = new int[companyNames.Count]; for (int idx = 0; idx < rankAdf.Length; idx++) rankHurst[idx] = 1;
+            int[] rankHalfLife = new int[companyNames.Count]; for (int idx = 0; idx < rankAdf.Length; idx++) rankHalfLife[idx] = 1;
+
             double[] knnHitRatio = new double[companyNames.Count];
             double[] logisticHitRatio = new double[companyNames.Count];
             double[] forestHitRatio = new double[companyNames.Count];
+
+            int[] rankKnn = new int[companyNames.Count]; for (int idx = 0; idx < rankAdf.Length; idx++) rankKnn[idx] = 1;
+            int[] rankLogistic = new int[companyNames.Count]; for (int idx = 0; idx < rankAdf.Length; idx++) rankLogistic[idx] = 1;
+            int[] rankForest = new int[companyNames.Count]; for (int idx = 0; idx < rankAdf.Length; idx++) rankForest[idx] = 1;
 
             KNearestNeighbors[] knn = new KNearestNeighbors[companyNames.Count];
             LogisticRegression[] logistic = new LogisticRegression[companyNames.Count];
@@ -90,7 +95,7 @@ namespace MachineLearning_Test
                     Console.WriteLine("회사 이름 오류");
                 }
 
-            }    // hurstScore 세팅
+            }   // hurstScore 세팅
             for (int idx = 0; idx < companyNames.Count; idx++)
             {
                 try
@@ -103,7 +108,7 @@ namespace MachineLearning_Test
                     Console.WriteLine("회사 이름 오류");
                 }
 
-            }    // halflife 세팅
+            }   // halflife 세팅
 
             for (int idx = 0; idx < companyNames.Count; idx++)
             {
@@ -140,17 +145,30 @@ namespace MachineLearning_Test
                     Console.WriteLine("로지스틱 성공");
                     forestHitRatio[idx] = (double)c.calcHitRatio(predict_forest, test_output);
                     Console.WriteLine("랜덤 포레스트 성공");
-
                 }
                 catch
                 {
                     Console.WriteLine("회사이름 오류 !");
                 }
 
-            }    // 학습 진행
+            }   // 학습 진행
 
-
-
+ 
+            for(int idx = 0; idx < companyNames.Count; idx++)
+            {
+                if(rankAdf[idx] == 1)
+                {
+                    Console.WriteLine("ADF 점수 1위 : " + companyNames[idx]);   
+                }
+                if (rankHalfLife[idx] == 1)
+                {
+                    Console.WriteLine("HalfLife 점수 1위 : " + companyNames[idx]);
+                }
+                if (rankHurst[idx] == 1)
+                {
+                    Console.WriteLine("Hurst 점수 1위 : " + companyNames[idx]);
+                }
+            }
         }
     }
 }
