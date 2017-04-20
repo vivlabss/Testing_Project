@@ -153,22 +153,6 @@ namespace MachineLearning_Test
 
             }   // 학습 진행
 
- 
-            for(int idx = 0; idx < companyNames.Count; idx++)
-            {
-                if(rankAdf[idx] == 1)
-                {
-                    Console.WriteLine("ADF 점수 1위 : " + companyNames[idx]);   
-                }
-                if (rankHalfLife[idx] == 1)
-                {
-                    Console.WriteLine("HalfLife 점수 1위 : " + companyNames[idx]);
-                }
-                if (rankHurst[idx] == 1)
-                {
-                    Console.WriteLine("Hurst 점수 1위 : " + companyNames[idx]);
-                }
-            }
         }
     }
 }
