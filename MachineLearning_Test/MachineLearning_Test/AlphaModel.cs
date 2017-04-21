@@ -86,8 +86,6 @@ namespace MachineLearning_Test
 
         }
 
-
-
     }
 
     public class DataSetting
