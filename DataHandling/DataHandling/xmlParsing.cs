@@ -34,7 +34,7 @@ namespace DataHandling
             setting.IgnoreComments = true;
             setting.IgnoreWhitespace = true;
 
-            StreamWriter sw = new StreamWriter(@"C:\Users\acorn\Desktop\DB\DS\result.txt");
+            StreamWriter sw = new StreamWriter(@"C:\Users\acorn\Desktop\DB\DS\DS.txt");
 
             for(int idx = 0; idx < itemLength1; idx++)
             {
@@ -51,7 +51,7 @@ namespace DataHandling
             sw.Dispose();
 
 
-            sw = new StreamWriter(@"C:\Users\acorn\Desktop\DB\PT\result.txt");
+            sw = new StreamWriter(@"C:\Users\acorn\Desktop\DB\PT\PT.txt");
 
             for (int idx = 0; idx < itemLength2; idx++)
             {
@@ -67,7 +67,7 @@ namespace DataHandling
             sw.Close();
             sw.Dispose();
 
-            sw = new StreamWriter(@"C:\Users\acorn\Desktop\DB\TM\result.txt");
+            sw = new StreamWriter(@"C:\Users\acorn\Desktop\DB\TM\TM.txt");
 
             for (int idx = 0; idx < itemLength3; idx++)
             {
@@ -83,7 +83,7 @@ namespace DataHandling
             sw.Close();
             sw.Dispose();
 
-            sw = new StreamWriter(@"C:\Users\acorn\Desktop\DB\UT\result.txt");
+            sw = new StreamWriter(@"C:\Users\acorn\Desktop\DB\UT\UT.txt");
 
             for (int idx = 0; idx < itemLength4; idx++)
             {
