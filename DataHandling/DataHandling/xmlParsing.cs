@@ -17,16 +17,16 @@ namespace DataHandling
         }
         static void dataRead()
         {
-            string path1 = @"C:\Users\acorn\Desktop\DB\DS\";
+            string path1 = @"C:\Users\youli\Desktop\특허청공모전\data\DS\";
             int itemLength1 = Directory.GetFiles(path1).Length;
 
-            string path2 = @"C:\Users\acorn\Desktop\DB\PT\";
+            string path2 = @"C:\Users\youli\Desktop\특허청공모전\data\PT\";
             int itemLength2 = Directory.GetFiles(path2).Length;
 
-            string path3 = @"C:\Users\acorn\Desktop\DB\TM\";
+            string path3 = @"C:\Users\youli\Desktop\특허청공모전\data\TM\";
             int itemLength3 = Directory.GetFiles(path3).Length;
 
-            string path4 = @"C:\Users\acorn\Desktop\DB\UT\";
+            string path4 = @"C:\Users\youli\Desktop\특허청공모전\data\UT\";
             int itemLength4 = Directory.GetFiles(path4).Length;
 
             XmlReader xmlReader;
@@ -34,7 +34,7 @@ namespace DataHandling
             setting.IgnoreComments = true;
             setting.IgnoreWhitespace = true;
 
-            StreamWriter sw = new StreamWriter(@"C:\Users\acorn\Desktop\DB\DS\DS.txt");
+            StreamWriter sw = new StreamWriter(@"C:\Users\youli\Desktop\특허청공모전\data\DS.csv", Encoding.Unicode);
 
             for(int idx = 0; idx < itemLength1; idx++)
             {
@@ -42,7 +42,7 @@ namespace DataHandling
 
                 while (xmlReader.Read())
                 {
-                    sw.WriteLine(xmlReader.Value);
+                    sw.Write(xmlReader.Value + ',');
                 }
                 sw.WriteLine();
             }
@@ -51,7 +51,7 @@ namespace DataHandling
             sw.Dispose();
 
 
-            sw = new StreamWriter(@"C:\Users\acorn\Desktop\DB\PT\PT.txt");
+            sw = new StreamWriter(@"C:\Users\youli\Desktop\특허청공모전\data\PT.csv", false, Encoding.Unicode);
 
             for (int idx = 0; idx < itemLength2; idx++)
             {
@@ -59,7 +59,7 @@ namespace DataHandling
 
                 while (xmlReader.Read())
                 {
-                    sw.WriteLine(xmlReader.Value);
+                    sw.Write(xmlReader.Value + ',');
                 }
                 sw.WriteLine();
             }
@@ -67,7 +67,7 @@ namespace DataHandling
             sw.Close();
             sw.Dispose();
 
-            sw = new StreamWriter(@"C:\Users\acorn\Desktop\DB\TM\TM.txt");
+            sw = new StreamWriter(@"C:\Users\youli\Desktop\특허청공모전\data\TM.csv", false, Encoding.Unicode);
 
             for (int idx = 0; idx < itemLength3; idx++)
             {
@@ -75,7 +75,7 @@ namespace DataHandling
 
                 while (xmlReader.Read())
                 {
-                    sw.WriteLine(xmlReader.Value);
+                    sw.Write(xmlReader.Value + ',');
                 }
                 sw.WriteLine();
             }
@@ -83,7 +83,7 @@ namespace DataHandling
             sw.Close();
             sw.Dispose();
 
-            sw = new StreamWriter(@"C:\Users\acorn\Desktop\DB\UT\UT.txt");
+            sw = new StreamWriter(@"C:\Users\youli\Desktop\특허청공모전\data\UT.csv", false, Encoding.Unicode);
 
             for (int idx = 0; idx < itemLength4; idx++)
             {
@@ -91,7 +91,7 @@ namespace DataHandling
 
                 while (xmlReader.Read())
                 {
-                    sw.WriteLine(xmlReader.Value);
+                    sw.Write(xmlReader.Value + ',');
                 }
                 sw.WriteLine();
             }
