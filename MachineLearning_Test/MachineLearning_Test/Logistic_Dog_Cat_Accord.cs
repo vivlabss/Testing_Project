@@ -1,34 +1,23 @@
-﻿using System;
+﻿using OpenCvSharp;
+using OpenCvSharp.CPlusPlus;
+
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.IO;
 using System.Drawing;
 
-using Encog.Neural.Networks;
-using Encog.Neural.Networks.Layers;
-using Encog.Engine.Network.Activation;
-using Encog.ML.Data;
-using Encog.ML.Data.Temporal;
-using Encog.Neural.Networks.Training.Propagation.Back;
-using Encog.Neural.Networks.Training.Propagation.Resilient;
-using Encog.Neural.Networks.Training.Propagation.Quick;
-using Encog.ML.Train;
-using Encog.ML.Data.Basic;
-using Encog;
-using Encog.Util.Banchmark;
-
-using OpenCvSharp;
-using OpenCvSharp.CPlusPlus;
+using Accord.MachineLearning.VectorMachines.Learning;
+using Accord.Statistics.Models.Regression;
+using Accord.Statistics.Analysis;
 
 namespace MachineLearning_Test
 {
-    static class Logistic_Dog_Cat
-    {      
+    static class Logistic_Dog_Cat_Accord
+    {
         static void Main(string[] args)
         {
-            // 메모 : 새로운 뉴럴넷 프레임워크 C# FANN.Net;
-
             // 참고자료 : http://terrorjang.tistory.com/88
             // http://terrorjang.tistory.com/89
 
@@ -45,7 +34,7 @@ namespace MachineLearning_Test
             List<double> temp_1 = new List<double>();
             double[][] inputs = new double[25000][]; // 25000
             double[][] tests = new double[12500][]; // 12500
-            double[][] outputs = new double[25000][]; // 25000
+            double[] outputs = new double[25000]; // 25000
             OpenCvSharp.CPlusPlus.Size size = new OpenCvSharp.CPlusPlus.Size(32, 32); // 결국 사이즈를 타협했다 ㅠㅠ
 
             Processing_cat(path_train, bitmaps, size);
@@ -80,60 +69,42 @@ namespace MachineLearning_Test
             // 라벨링 데이터 셋팅
             for (int i = 0; i < (outputs.Length / 2); i++)
             {
-                outputs[i] = new double[] { 0 };
-                outputs[i + (outputs.Length/2)] = new double[] { 1 };
+                outputs[i] =  0 ;
+                outputs[i + (outputs.Length / 2)] =  1 ;
             }
-   
+
             Console.WriteLine("라벨링 완료");
 
-            var network = new BasicNetwork();
-            network.AddLayer(new BasicLayer(null, true, 4150));
-            network.AddLayer(new BasicLayer(new ActivationSigmoid(), true, 2));
-            network.AddLayer(new BasicLayer(new ActivationSigmoid(), false, 1));
-       
-            network.Structure.FinalizeStructure();
-            network.Reset();
-
-            IMLDataSet trainingSet = new BasicMLDataSet(inputs, outputs);
-
-
-           IMLTrain train = new ResilientPropagation(network, trainingSet);
-
-            int epoch = 1;
-
-            do
+            var lra = new LogisticRegressionAnalysis()
             {
-                train.Iteration();
-                Console.WriteLine(@"Epoch #" + epoch + @"Error:" + train.Error);
-                epoch++;
-            } while (train.Error > 0.05);
+                Regularization = 0
+            };
 
-            train.FinishTraining();
+            LogisticRegression regression = lra.Learn(inputs, outputs);
 
             StreamWriter sw = new StreamWriter("data_result.csv", false, Encoding.UTF8);
             sw.WriteLine("id,label");
 
-            Console.WriteLine(@"Neural Network Results");
-            
+           
+
             for (int i = 0; i < tests.Length; i++)
             {
-                IMLData testSet = new BasicMLData(tests[i]);
-                IMLData output = network.Compute(testSet);
-                Console.WriteLine("actual=" + output[0]);
-                sw.WriteLine((i+1) + "," + output[0]);
+
+                Console.WriteLine("actual=" + lra.Regression.Score(tests[i]));
+                sw.WriteLine((i + 1) + "," + lra.Regression.Score(tests[i]));
             }
             sw.Close();
-            EncogFramework.Instance.Shutdown();
+
             Console.WriteLine("완료");
         }
 
         private static void Processing_dog(string path_train, Bitmap[] bitmaps, OpenCvSharp.CPlusPlus.Size size)
         {
 
-            for (int i = 0; i < (bitmaps.Length/2); i++)
+            for (int i = 0; i < (bitmaps.Length / 2); i++)
             {
                 Mat mat_dog = Cv2.ImRead(path_train + @"\dog." + i + ".jpg", LoadMode.GrayScale);
-                mat_dog = mat_dog.Resize(size,0,0,Interpolation.Linear);
+                mat_dog = mat_dog.Resize(size, 0, 0, Interpolation.Linear);
                 bitmaps[i + (bitmaps.Length / 2)] = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(mat_dog);
                 Console.WriteLine(path_train + @"\dog." + i + ".jpg");
                 mat_dog.Dispose();
@@ -143,7 +114,7 @@ namespace MachineLearning_Test
 
         private static void Processing_cat(string path_train, Bitmap[] bitmaps, OpenCvSharp.CPlusPlus.Size size)
         {
-            for (int i = 0; i < bitmaps.Length/2; i++)
+            for (int i = 0; i < bitmaps.Length / 2; i++)
             {
                 Mat mat_cat = Cv2.ImRead(path_train + @"\cat." + i + ".jpg", LoadMode.GrayScale);
                 mat_cat = mat_cat.Resize(size, 0, 0, Interpolation.Linear);
@@ -158,10 +129,10 @@ namespace MachineLearning_Test
         {
             for (int i = 0; i < bitmaps.Length; i++)
             {
-                Mat mat_test = Cv2.ImRead(path_test + @"\" + (i+1) + ".jpg", LoadMode.GrayScale);
+                Mat mat_test = Cv2.ImRead(path_test + @"\" + (i + 1) + ".jpg", LoadMode.GrayScale);
                 mat_test = mat_test.Resize(size, 0, 0, Interpolation.Linear);
                 bitmaps[i] = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(mat_test);
-                Console.WriteLine(path_test + @"\"+ (i+1) + ".jpg");
+                Console.WriteLine(path_test + @"\" + (i + 1) + ".jpg");
                 mat_test.Dispose();
                 mat_test = null;
 
@@ -169,7 +140,7 @@ namespace MachineLearning_Test
         }
 
         static byte[] imageToByteArray(this System.Drawing.Bitmap image)
-        {          
+        {
             using (var ms = new MemoryStream())
             {
                 Bitmap copy = new Bitmap(image);
@@ -178,30 +149,7 @@ namespace MachineLearning_Test
                 copy = null;
                 return ms.ToArray();
             }
+
         }
-
-        // <testing moduule>
-        //Mat mat_dog = Cv2.ImRead(path_train + @"\dog.1.jpg", LoadMode.Color);
-        //mat_dog = mat_dog.Resize(size, 0, 0, Interpolation.Linear);
-        //    Bitmap testing = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(mat_dog);
-        //temp01 = imageToByteArray(testing);
-        //List<double> temp_1 = new List<double>();
-        //double[] temp_2;
-        //temp01.ToList<byte>().ForEach(b => temp_1.Add(Convert.ToDouble(b)));
-        //    temp_2 = temp_1.ToArray<double>();
-
-        ////로지스틱 회귀분석
-        //var learner = new ProbabilisticCoordinateDescent()
-        //{
-        //    Tolerance = 1e-10,
-        //    Complexity = 1e+10,
-        //};
-        //Console.WriteLine("회귀분석 전처리 완료");
-
-        //    var svm = learner.Learn(inputs, outputs);
-        //var regression = (LogisticRegression)svm;
-        //Console.WriteLine("학습완료");
     }
-
-    
 }
