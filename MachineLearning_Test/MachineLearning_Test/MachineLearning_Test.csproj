@@ -90,6 +90,9 @@
     <Reference Include="encog-core-cs, Version=3.2.0.0, Culture=neutral, PublicKeyToken=3e882172b12155d4, processorArchitecture=MSIL">
       <HintPath>..\packages\encog-dotnet-core.3.2.0\lib\net35\encog-core-cs.dll</HintPath>
     </Reference>
+    <Reference Include="FANNCSharp, Version=0.1.7.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\FANNCSharp-x64.0.1.8\lib\FANNCSharp.dll</HintPath>
+    </Reference>
     <Reference Include="OpenCvSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6adad1e807fea099, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenCvSharp-AnyCPU.2.4.10.20170306\lib\net45\OpenCvSharp.dll</HintPath>
     </Reference>
@@ -276,7 +279,9 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Accord.3.4.0\build\Accord.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Accord.3.4.0\build\Accord.targets'))" />
     <Error Condition="!Exists('..\packages\OpenCvSharp-AnyCPU.2.4.10.20170306\build\OpenCvSharp-AnyCPU.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\OpenCvSharp-AnyCPU.2.4.10.20170306\build\OpenCvSharp-AnyCPU.props'))" />
+    <Error Condition="!Exists('..\packages\FANNCSharp-x64.0.1.8\build\FANNCSharp-x64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\FANNCSharp-x64.0.1.8\build\FANNCSharp-x64.targets'))" />
   </Target>
+  <Import Project="..\packages\FANNCSharp-x64.0.1.8\build\FANNCSharp-x64.targets" Condition="Exists('..\packages\FANNCSharp-x64.0.1.8\build\FANNCSharp-x64.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

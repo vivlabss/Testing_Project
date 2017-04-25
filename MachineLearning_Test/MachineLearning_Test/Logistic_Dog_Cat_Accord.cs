@@ -8,9 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 
-using Accord.MachineLearning.VectorMachines.Learning;
-using Accord.Statistics.Models.Regression;
-using Accord.Statistics.Analysis;
+using FANNCSharp.Double;
 
 namespace MachineLearning_Test
 {
@@ -27,14 +25,14 @@ namespace MachineLearning_Test
 
             string path_train = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\train\train";
             string path_test = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\test\test";
-            Bitmap[] bitmaps = new Bitmap[25000]; // 25000
-            Bitmap[] bitmaps_test = new Bitmap[12500]; // 12500
+            Bitmap[] bitmaps = new Bitmap[250]; // 25000
+            Bitmap[] bitmaps_test = new Bitmap[125]; // 12500
             byte[] temp01;
             double[] temp_2;
             List<double> temp_1 = new List<double>();
-            double[][] inputs = new double[25000][]; // 25000
-            double[][] tests = new double[12500][]; // 12500
-            double[] outputs = new double[25000]; // 25000
+            double[][] inputs = new double[250][]; // 25000
+            double[][] tests = new double[125][]; // 12500
+            double[][] outputs = new double[250][]; // 25000
             OpenCvSharp.CPlusPlus.Size size = new OpenCvSharp.CPlusPlus.Size(32, 32); // 결국 사이즈를 타협했다 ㅠㅠ
 
             Processing_cat(path_train, bitmaps, size);
@@ -69,29 +67,40 @@ namespace MachineLearning_Test
             // 라벨링 데이터 셋팅
             for (int i = 0; i < (outputs.Length / 2); i++)
             {
-                outputs[i] =  0 ;
-                outputs[i + (outputs.Length / 2)] =  1 ;
+                outputs[i] = new double[] { 0} ;
+                outputs[i + (outputs.Length / 2)] = new double[] { 1 };
             }
 
             Console.WriteLine("라벨링 완료");
 
-            var lra = new LogisticRegressionAnalysis()
-            {
-                Regularization = 0
-            };
+            NeuralNet network = new NeuralNet();
 
-            LogisticRegression regression = lra.Learn(inputs, outputs);
+            network.SetActivationFunction(FANNCSharp.ActivationFunction.SIGMOID, 1, 4150);
+            network.SetActivationFunction(FANNCSharp.ActivationFunction.SIGMOID, 2, 3);
+            network.SetActivationFunction(FANNCSharp.ActivationFunction.SIGMOID, 3, 1);
+            TrainingData training = new TrainingData();
+            training.SetTrainData(inputs, outputs);
+            network.TrainOnData(training, 5000, 1, (float)0.05);
+
+
+            float epoch = 1;
+
+            while (true)
+            {
+                epoch = network.TrainEpoch(training);
+                Console.WriteLine(epoch);
+                if (epoch < 0.05) break;
+            }
+
 
             StreamWriter sw = new StreamWriter("data_result.csv", false, Encoding.UTF8);
-            sw.WriteLine("id,label");
-
-           
+            sw.WriteLine("id,label");          
 
             for (int i = 0; i < tests.Length; i++)
             {
-
-                Console.WriteLine("actual=" + lra.Regression.Score(tests[i]));
-                sw.WriteLine((i + 1) + "," + lra.Regression.Score(tests[i]));
+                double[] result = network.Run(tests[i]);
+                Console.WriteLine("actual=" +  result[i]);
+                sw.WriteLine((i + 1) + "," + result[i]);
             }
             sw.Close();
 
