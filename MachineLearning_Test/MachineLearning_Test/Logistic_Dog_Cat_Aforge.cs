@@ -77,7 +77,7 @@ namespace MachineLearning_Test
             Console.WriteLine("라벨링 완료");
 
             ActivationNetwork network = new ActivationNetwork(
-                new SigmoidFunction(0.00004),
+                new SigmoidFunction(0.00008),
                 4150, 
                 3,
                 1);
@@ -185,3 +185,5 @@ namespace MachineLearning_Test
 
 
 }
+
+
