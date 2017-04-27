@@ -77,12 +77,13 @@ namespace MachineLearning_Test
             Console.WriteLine("라벨링 완료");
 
             ActivationNetwork network = new ActivationNetwork(
-                new SigmoidFunction(0.1),
-                4150,             
+                new SigmoidFunction(0.0000000002),
+                4150, 
+                3,
                 1);
 
             //AForge.Neuro.Learning.BackPropagationLearning
-           PerceptronLearning teacher = new PerceptronLearning(network);
+            ResilientBackpropagationLearning teacher = new ResilientBackpropagationLearning(network);
             while (true)
             {
                 double error = teacher.RunEpoch(inputs, outputs);

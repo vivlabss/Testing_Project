@@ -25,14 +25,14 @@ namespace MachineLearning_Test
 
             string path_train = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\train\train";
             string path_test = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\test\test";
-            Bitmap[] bitmaps = new Bitmap[25000]; // 25000
-            Bitmap[] bitmaps_test = new Bitmap[12500]; // 12500
+            Bitmap[] bitmaps = new Bitmap[250]; // 25000
+            Bitmap[] bitmaps_test = new Bitmap[125]; // 12500
             byte[] temp01;
             double[] temp_2;
             List<double> temp_1 = new List<double>();
-            double[][] inputs = new double[25000][]; // 25000
-            double[][] tests = new double[12500][]; // 12500
-            double[][] outputs = new double[25000][]; // 25000
+            double[][] inputs = new double[250][]; // 25000
+            double[][] tests = new double[125][]; // 12500
+            double[][] outputs = new double[250][]; // 25000
             OpenCvSharp.CPlusPlus.Size size = new OpenCvSharp.CPlusPlus.Size(32, 32); // 결국 사이즈를 타협했다 ㅠㅠ
 
             Processing_cat(path_train, bitmaps, size);
@@ -75,9 +75,9 @@ namespace MachineLearning_Test
         
             NeuralNet network = new NeuralNet(3, 2, 4150,1);
             network.LearningRate = 2;
-            network.SetActivationFunction(FANNCSharp.ActivationFunction.SIGMOID, 1, 4150);
-            network.SetActivationFunction(FANNCSharp.ActivationFunction.SIGMOID, 2, 3);
-            network.SetActivationFunction(FANNCSharp.ActivationFunction.SIGMOID, 3, 1);
+            network.SetActivationFunction(FANNCSharp.ActivationFunction.SIGMOID, 1, 2);
+            network.SetActivationFunction(FANNCSharp.ActivationFunction.SIGMOID, 2, 4150);
+            network.SetActivationFunction(FANNCSharp.ActivationFunction.SIGMOID, 3, 2);
             TrainingData training = new TrainingData();
             training.SetTrainData(inputs, outputs);
             network.TrainOnData(training, 10000, 1, (float)0.05);
