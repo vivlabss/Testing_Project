@@ -74,10 +74,10 @@ namespace MachineLearning_Test
             Console.WriteLine("라벨링 완료");
         
             NeuralNet network = new NeuralNet(3, 2, 4150,1);
-            network.LearningRate = 2;
-            network.SetActivationFunction(FANNCSharp.ActivationFunction.SIGMOID, 1, 2);
-            network.SetActivationFunction(FANNCSharp.ActivationFunction.SIGMOID, 2, 4150);
-            network.SetActivationFunction(FANNCSharp.ActivationFunction.SIGMOID, 3, 2);
+            network.LearningRate = (float)0.000005;
+            network.SetActivationFunction(FANNCSharp.ActivationFunction.SIGMOID, 1, 4150);
+            network.SetActivationFunction(FANNCSharp.ActivationFunction.SIGMOID, 2, 3);
+            network.SetActivationFunction(FANNCSharp.ActivationFunction.SIGMOID, 3, 1);
             TrainingData training = new TrainingData();
             training.SetTrainData(inputs, outputs);
             network.TrainOnData(training, 10000, 1, (float)0.05);

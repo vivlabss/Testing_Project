@@ -28,14 +28,14 @@ namespace MachineLearning_Test
 
             string path_train = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\train\train";
             string path_test = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\test\test";
-            Bitmap[] bitmaps = new Bitmap[25000]; // 25000
+            Bitmap[] bitmaps = new Bitmap[250]; // 25000
             Bitmap[] bitmaps_test = new Bitmap[12500]; // 12500
             byte[] temp01;
             double[] temp_2;
             List<double> temp_1 = new List<double>();
-            double[][] inputs = new double[25000][]; // 25000
+            double[][] inputs = new double[250][]; // 25000
             double[][] tests = new double[12500][]; // 12500
-            double[][] outputs = new double[25000][]; // 25000
+            double[][] outputs = new double[250][]; // 25000
             OpenCvSharp.CPlusPlus.Size size = new OpenCvSharp.CPlusPlus.Size(32, 32); // 결국 사이즈를 타협했다 ㅠㅠ
 
             Processing_cat(path_train, bitmaps, size);
@@ -77,7 +77,7 @@ namespace MachineLearning_Test
             Console.WriteLine("라벨링 완료");
 
             ActivationNetwork network = new ActivationNetwork(
-                new SigmoidFunction(0.00008),
+                new SigmoidFunction(0.000003),
                 4150, 
                 3,
                 1);
@@ -88,7 +88,7 @@ namespace MachineLearning_Test
             {
                 double error = teacher.RunEpoch(inputs, outputs);
                 Console.WriteLine(error);
-                if (error < 1) break;
+                if (error < 0.05) break;
             }
 
            
