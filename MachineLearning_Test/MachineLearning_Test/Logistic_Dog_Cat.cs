@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Drawing;
+using System.Threading;
+using System.Threading.Tasks;
 
 using Encog.Neural.Networks;
 using Encog.Neural.Networks.Layers;
@@ -39,19 +41,21 @@ namespace MachineLearning_Test
 
             string path_train = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\train\train";
             string path_test = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\test\test";
-            Bitmap[] bitmaps = new Bitmap[300]; // 25000
+            Bitmap[] bitmaps = new Bitmap[2000]; // 25000
             Bitmap[] bitmaps_test = new Bitmap[12500]; // 12500
             byte[] temp01;
             double[] temp_2;
             List<double> temp_1 = new List<double>();
-            double[][] inputs = new double[300][]; // 25000
+            double[][] inputs = new double[2000][]; // 25000
             double[][] tests = new double[12500][]; // 12500
-            double[][] outputs = new double[300][]; // 25000
+            double[][] outputs = new double[2000][]; // 25000
             OpenCvSharp.CPlusPlus.Size size = new OpenCvSharp.CPlusPlus.Size(32, 32); // 결국 사이즈를 타협했다 ㅠㅠ
 
-            Processing_cat(path_train, bitmaps, size);
-            Processing_dog(path_train, bitmaps, size);
-            Processing_test(path_test, bitmaps_test, size);
+            Parallel.Invoke(
+                () => { Processing_cat(path_train, bitmaps, size); },
+                () => { Processing_dog(path_train, bitmaps, size); },
+                () => { Processing_test(path_test, bitmaps_test, size); }
+                );
 
             // 학습 데이터 바이트 배열로 변환하여 저장 
             for (int i = 0; i < bitmaps.Length; i++)
