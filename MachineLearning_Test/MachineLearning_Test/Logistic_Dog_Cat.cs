@@ -39,14 +39,14 @@ namespace MachineLearning_Test
 
             string path_train = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\train\train";
             string path_test = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\test\test";
-            Bitmap[] bitmaps = new Bitmap[200]; // 25000
+            Bitmap[] bitmaps = new Bitmap[300]; // 25000
             Bitmap[] bitmaps_test = new Bitmap[12500]; // 12500
             byte[] temp01;
             double[] temp_2;
             List<double> temp_1 = new List<double>();
-            double[][] inputs = new double[200][]; // 25000
+            double[][] inputs = new double[300][]; // 25000
             double[][] tests = new double[12500][]; // 12500
-            double[][] outputs = new double[200][]; // 25000
+            double[][] outputs = new double[300][]; // 25000
             OpenCvSharp.CPlusPlus.Size size = new OpenCvSharp.CPlusPlus.Size(32, 32); // 결국 사이즈를 타협했다 ㅠㅠ
 
             Processing_cat(path_train, bitmaps, size);
@@ -89,7 +89,7 @@ namespace MachineLearning_Test
 
             var network = new BasicNetwork();
             network.AddLayer(new BasicLayer(null, true, 4150));
-            network.AddLayer(new BasicLayer(new ActivationSigmoid(), true, 3));
+            network.AddLayer(new BasicLayer(new ActivationSigmoid(), true, 10));
             network.AddLayer(new BasicLayer(new ActivationSigmoid(), false, 1));
        
             network.Structure.FinalizeStructure();
@@ -107,7 +107,7 @@ namespace MachineLearning_Test
                 train.Iteration();
                 Console.WriteLine(@"Epoch #" + epoch + @"Error:" + train.Error);
                 epoch++;
-            } while (train.Error > 0.01);
+            } while (train.Error > 0.05);
 
             train.FinishTraining();
 
