@@ -41,20 +41,22 @@ namespace MachineLearning_Test
 
             string path_train = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\train\train";
             string path_test = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\test\test";
-            Bitmap[] bitmaps = new Bitmap[2000]; // 25000
+            string bmppath_train = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\bmp_train";
+            string bmppath_test = Directory.GetCurrentDirectory() + @"\Dog_Cat_Data\bmp_test";
+            Bitmap[] bitmaps = new Bitmap[25000]; // 25000
             Bitmap[] bitmaps_test = new Bitmap[12500]; // 12500
             byte[] temp01;
             double[] temp_2;
             List<double> temp_1 = new List<double>();
-            double[][] inputs = new double[2000][]; // 25000
+            double[][] inputs = new double[25000][]; // 25000
             double[][] tests = new double[12500][]; // 12500
-            double[][] outputs = new double[2000][]; // 25000
+            double[][] outputs = new double[1000][]; // 25000
             OpenCvSharp.CPlusPlus.Size size = new OpenCvSharp.CPlusPlus.Size(32, 32); // 결국 사이즈를 타협했다 ㅠㅠ
 
             Parallel.Invoke(
-                () => { Processing_cat(path_train, bitmaps, size); },
-                () => { Processing_dog(path_train, bitmaps, size); },
-                () => { Processing_test(path_test, bitmaps_test, size); }
+                () => { Processing_cat(path_train, bmppath_train, bitmaps, size); },
+                () => { Processing_dog(path_train, bmppath_train, bitmaps, size); },
+                () => { Processing_test(path_test, bmppath_test, bitmaps_test, size); }
                 );
 
             // 학습 데이터 바이트 배열로 변환하여 저장 
@@ -132,13 +134,14 @@ namespace MachineLearning_Test
             Console.WriteLine("완료");
         }
 
-        private static void Processing_dog(string path_train, Bitmap[] bitmaps, OpenCvSharp.CPlusPlus.Size size)
+        private static void Processing_dog(string path_train, string bmppath_train, Bitmap[] bitmaps, OpenCvSharp.CPlusPlus.Size size)
         {
 
             for (int i = 0; i < (bitmaps.Length/2); i++)
             {
-                Mat mat_dog = Cv2.ImRead(path_train + @"\dog." + i + ".jpg", LoadMode.GrayScale);
+                Mat mat_dog = Cv2.ImRead(path_train + @"\dog." + i + ".jpg", LoadMode.Color);
                 mat_dog = mat_dog.Resize(size,0,0,Interpolation.Linear);
+                mat_dog.SaveImage(bmppath_train + @"\" + "dog." + i +  ".jpg");
                 bitmaps[i + (bitmaps.Length / 2)] = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(mat_dog);
                 Console.WriteLine(path_train + @"\dog." + i + ".jpg");
                 mat_dog.Dispose();
@@ -146,12 +149,13 @@ namespace MachineLearning_Test
             }
         }
 
-        private static void Processing_cat(string path_train, Bitmap[] bitmaps, OpenCvSharp.CPlusPlus.Size size)
+        private static void Processing_cat(string path_train, string bmppath_train, Bitmap[] bitmaps, OpenCvSharp.CPlusPlus.Size size)
         {
             for (int i = 0; i < bitmaps.Length/2; i++)
             {
-                Mat mat_cat = Cv2.ImRead(path_train + @"\cat." + i + ".jpg", LoadMode.GrayScale);
+                Mat mat_cat = Cv2.ImRead(path_train + @"\cat." + i + ".jpg", LoadMode.Color);
                 mat_cat = mat_cat.Resize(size, 0, 0, Interpolation.Linear);
+                mat_cat.SaveImage(bmppath_train + @"\" +"cat." + i + ".jpg");
                 bitmaps[i] = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(mat_cat);
                 Console.WriteLine(path_train + @"\cat." + i + ".jpg");
                 mat_cat.Dispose();
@@ -159,12 +163,13 @@ namespace MachineLearning_Test
             }
         }
 
-        private static void Processing_test(string path_test, Bitmap[] bitmaps, OpenCvSharp.CPlusPlus.Size size)
+        private static void Processing_test(string path_test, string bmppath_test, Bitmap[] bitmaps, OpenCvSharp.CPlusPlus.Size size)
         {
             for (int i = 0; i < bitmaps.Length; i++)
             {
-                Mat mat_test = Cv2.ImRead(path_test + @"\" + (i+1) + ".jpg", LoadMode.GrayScale);
+                Mat mat_test = Cv2.ImRead(path_test + @"\" + (i+1) + ".jpg", LoadMode.Color);
                 mat_test = mat_test.Resize(size, 0, 0, Interpolation.Linear);
+                mat_test.SaveImage(bmppath_test + @"\" + (i + 1) + ".jpg");
                 bitmaps[i] = OpenCvSharp.Extensions.BitmapConverter.ToBitmap(mat_test);
                 Console.WriteLine(path_test + @"\"+ (i+1) + ".jpg");
                 mat_test.Dispose();
