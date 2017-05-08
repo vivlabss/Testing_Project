@@ -31,6 +31,10 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.axKHOpenAPI1 = new AxKHOpenAPILib.AxKHOpenAPI();
             this.button1 = new System.Windows.Forms.Button();
+            this.listView1 = new System.Windows.Forms.ListView();
+            this.button2 = new System.Windows.Forms.Button();
+            this.종목명 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.종목코드 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             ((System.ComponentModel.ISupportInitialize)(this.axKHOpenAPI1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -54,11 +58,46 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // listView1
+            // 
+            this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.종목명,
+            this.종목코드});
+            this.listView1.GridLines = true;
+            this.listView1.Location = new System.Drawing.Point(128, 13);
+            this.listView1.Name = "listView1";
+            this.listView1.Size = new System.Drawing.Size(362, 315);
+            this.listView1.TabIndex = 2;
+            this.listView1.UseCompatibleStateImageBehavior = false;
+            this.listView1.View = System.Windows.Forms.View.Details;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(47, 305);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 3;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // 종목명
+            // 
+            this.종목명.Text = "종목명";
+            this.종목명.Width = 131;
+            // 
+            // 종목코드
+            // 
+            this.종목코드.Text = "종목코드";
+            this.종목코드.Width = 255;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(502, 340);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.listView1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.axKHOpenAPI1);
             this.Name = "Form1";
@@ -72,6 +111,10 @@
 
         private AxKHOpenAPILib.AxKHOpenAPI axKHOpenAPI1;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.ColumnHeader 종목명;
+        private System.Windows.Forms.ColumnHeader 종목코드;
     }
 }
 
