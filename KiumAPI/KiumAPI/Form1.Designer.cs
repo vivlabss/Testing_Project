@@ -32,16 +32,20 @@
             this.axKHOpenAPI1 = new AxKHOpenAPILib.AxKHOpenAPI();
             this.button1 = new System.Windows.Forms.Button();
             this.listView1 = new System.Windows.Forms.ListView();
-            this.button2 = new System.Windows.Forms.Button();
             this.종목명 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.종목코드 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.button2 = new System.Windows.Forms.Button();
+            this.listView2 = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.button3 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.axKHOpenAPI1)).BeginInit();
             this.SuspendLayout();
             // 
             // axKHOpenAPI1
             // 
             this.axKHOpenAPI1.Enabled = true;
-            this.axKHOpenAPI1.Location = new System.Drawing.Point(22, 13);
+            this.axKHOpenAPI1.Location = new System.Drawing.Point(12, 12);
             this.axKHOpenAPI1.Name = "axKHOpenAPI1";
             this.axKHOpenAPI1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axKHOpenAPI1.OcxState")));
             this.axKHOpenAPI1.Size = new System.Drawing.Size(100, 50);
@@ -50,7 +54,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(22, 69);
+            this.button1.Location = new System.Drawing.Point(12, 68);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 1;
@@ -64,22 +68,12 @@
             this.종목명,
             this.종목코드});
             this.listView1.GridLines = true;
-            this.listView1.Location = new System.Drawing.Point(128, 13);
+            this.listView1.Location = new System.Drawing.Point(118, 12);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(362, 315);
+            this.listView1.Size = new System.Drawing.Size(272, 315);
             this.listView1.TabIndex = 2;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(47, 305);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "button2";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // 종목명
             // 
@@ -91,11 +85,56 @@
             this.종목코드.Text = "종목코드";
             this.종목코드.Width = 255;
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(12, 97);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 3;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // listView2
+            // 
+            this.listView2.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2});
+            this.listView2.GridLines = true;
+            this.listView2.Location = new System.Drawing.Point(397, 13);
+            this.listView2.Name = "listView2";
+            this.listView2.Size = new System.Drawing.Size(408, 314);
+            this.listView2.TabIndex = 4;
+            this.listView2.UseCompatibleStateImageBehavior = false;
+            this.listView2.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "종목명";
+            this.columnHeader1.Width = 200;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "코드명";
+            this.columnHeader2.Width = 341;
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(13, 127);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(75, 23);
+            this.button3.TabIndex = 5;
+            this.button3.Text = "button3";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(502, 340);
+            this.ClientSize = new System.Drawing.Size(817, 340);
+            this.Controls.Add(this.button3);
+            this.Controls.Add(this.listView2);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.button1);
@@ -115,6 +154,10 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ColumnHeader 종목명;
         private System.Windows.Forms.ColumnHeader 종목코드;
+        private System.Windows.Forms.ListView listView2;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.Button button3;
     }
 }
 

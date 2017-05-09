@@ -14,6 +14,10 @@ namespace KiumAPI
 {
     public partial class Form1 : Form
     {
+        // 참고자료 : http://blog.naver.com/rkdwnsdud555/220814310043
+
+        List<string> codeList; 
+
         public Form1()
         {
             InitializeComponent();
@@ -21,11 +25,18 @@ namespace KiumAPI
 
         private void axKHOpenAPI1_OnReceiveTrData(object sender, AxKHOpenAPILib._DKHOpenAPIEvents_OnReceiveTrDataEvent e)
         {
-            int nCnt = axKHOpenAPI1.GetRepeatCnt(e.sTrCode, e.sRQName);
-            string data1 = axKHOpenAPI1.GetCommData(e.sTrCode, e.sRQName, 0, "종목코드");
-            string data2 = axKHOpenAPI1.GetCommData(e.sTrCode, e.sRQName, 0, "종목명");
-            ListViewItem li = new ListViewItem(new string[] { data1, data2 });
-            listView1.Items.Add(li);
+            if(e.sRQName == "주식기본정보") { 
+                int nCnt = axKHOpenAPI1.GetRepeatCnt(e.sTrCode, e.sRQName);
+                for(int nIdx = 0; nIdx < nCnt; nIdx++)
+                {
+                    string data1 = axKHOpenAPI1.GetCommData(e.sTrCode, e.sRQName, nIdx, "종목명");
+                    string data2 = axKHOpenAPI1.GetCommData(e.sTrCode, e.sRQName, nIdx, "종목코드");
+                    ListViewItem li = new ListViewItem(new string[] { data1, data2 });
+                    listView1.Items.Add(li);
+                }
+
+         
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -40,9 +51,22 @@ namespace KiumAPI
 
         private void button2_Click(object sender, EventArgs e)
         {
+           
             axKHOpenAPI1.SetInputValue("종목코드", "000050");
             int nRet = axKHOpenAPI1.CommRqData("주식기본정보", "OPT10001", 0, "1001");
+            
                    
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+           // 상장사의 코드만 전부다 받아올 수 있다.
+           string code = axKHOpenAPI1.GetCodeListByMarket("0");
+           codeList = code.Split(';').ToList<string>();         // 1292 개
+           MessageBox.Show(codeList.Count.ToString()); 
+           //axKHOpenAPI1.SetInputValue("종목코드", codeList[cnt]);
+           int nRet = axKHOpenAPI1.CommKwRqData(code, 0, 100, 0, "주식기본정보", "1001");
+            
         }
     }
 }
