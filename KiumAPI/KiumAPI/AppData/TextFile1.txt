@@ -1,11 +1,11 @@
 ﻿CREATE PROC CREATE_STOCK_TABLE
 
-@NAME nvarchar(128)
+@NAME nvarchar(512)
 
 AS
 BEGIN
 DECLARE
-@strSQL nvarchar(128)
+@strSQL nvarchar(1024)
 
 SET @strSQL = 'CREATE TABLE ' + @NAME+
 '( Id int identity(1,1) NOT NULL,
