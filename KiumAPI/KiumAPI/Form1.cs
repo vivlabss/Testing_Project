@@ -87,7 +87,7 @@ namespace KiumAPI
             {
                 MessageBox.Show(ex.Message);
             }
-            MessageBox.Show(companyList[213]);
+            MessageBox.Show(companyList[1030]);
 
         }
 
@@ -99,26 +99,25 @@ namespace KiumAPI
                 con.ConnectionString = @"Data Source=.\SQLEXPRESS;Integrated Security=SSPI;Initial Catalog=KiumAPI";
                 con.Open();
 
-                try
-                {
                     for (int cnt = 0; cnt < companyList.Count; cnt++)
                     {
+                        try { 
                         SqlCommand cmd = new SqlCommand("CREATE_STOCK_TABLE", con);
                         cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
                         SqlParameter param = new SqlParameter("@NAME", System.Data.SqlDbType.NVarChar);
-                        param.Value = companyList[cnt];
+                        param.Value = "\"" + companyList[cnt] + "\"";
                         cmd.Parameters.Add(param);
                         cmd.ExecuteNonQuery();
                         counter++;
-
+                        }
+                        catch(Exception ex)
+                        {
+                            MessageBox.Show(ex.Message + "\n counter :" + counter);
+                        }
+                       
                     }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message + "\n counter :" + counter );                   
-                }
-
+                
             }           
             catch (Exception ex)
             {
