@@ -1,0 +1,18 @@
+﻿CREATE PROC CREATE_STOCK_TABLE
+
+@NAME nvarchar(128)
+
+AS
+BEGIN
+DECLARE
+@strSQL nvarchar(128)
+
+SET @strSQL = 'CREATE TABLE ' + @NAME+
+'( Id int identity(1,1) NOT NULL,
+   Price varchar(50) NOT NULL,
+   Date datetime
+  )'
+
+
+EXECUTE sp_executesql @strSQL
+END

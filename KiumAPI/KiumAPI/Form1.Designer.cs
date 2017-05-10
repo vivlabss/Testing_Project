@@ -35,10 +35,8 @@
             this.종목명 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.종목코드 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.button2 = new System.Windows.Forms.Button();
-            this.listView2 = new System.Windows.Forms.ListView();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.button3 = new System.Windows.Forms.Button();
+            this.btnBatch = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.axKHOpenAPI1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -70,7 +68,7 @@
             this.listView1.GridLines = true;
             this.listView1.Location = new System.Drawing.Point(118, 12);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(272, 315);
+            this.listView1.Size = new System.Drawing.Size(687, 315);
             this.listView1.TabIndex = 2;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -78,12 +76,12 @@
             // 종목명
             // 
             this.종목명.Text = "종목명";
-            this.종목명.Width = 131;
+            this.종목명.Width = 339;
             // 
             // 종목코드
             // 
             this.종목코드.Text = "종목코드";
-            this.종목코드.Width = 255;
+            this.종목코드.Width = 348;
             // 
             // button2
             // 
@@ -95,29 +93,6 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // listView2
-            // 
-            this.listView2.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2});
-            this.listView2.GridLines = true;
-            this.listView2.Location = new System.Drawing.Point(397, 13);
-            this.listView2.Name = "listView2";
-            this.listView2.Size = new System.Drawing.Size(408, 314);
-            this.listView2.TabIndex = 4;
-            this.listView2.UseCompatibleStateImageBehavior = false;
-            this.listView2.View = System.Windows.Forms.View.Details;
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "종목명";
-            this.columnHeader1.Width = 200;
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "코드명";
-            this.columnHeader2.Width = 341;
-            // 
             // button3
             // 
             this.button3.Location = new System.Drawing.Point(13, 127);
@@ -128,13 +103,23 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
+            // btnBatch
+            // 
+            this.btnBatch.Location = new System.Drawing.Point(13, 304);
+            this.btnBatch.Name = "btnBatch";
+            this.btnBatch.Size = new System.Drawing.Size(75, 23);
+            this.btnBatch.TabIndex = 6;
+            this.btnBatch.Text = "배치실행";
+            this.btnBatch.UseVisualStyleBackColor = true;
+            this.btnBatch.Click += new System.EventHandler(this.btnBatch_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(817, 340);
+            this.Controls.Add(this.btnBatch);
             this.Controls.Add(this.button3);
-            this.Controls.Add(this.listView2);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.button1);
@@ -154,10 +139,8 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ColumnHeader 종목명;
         private System.Windows.Forms.ColumnHeader 종목코드;
-        private System.Windows.Forms.ListView listView2;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button btnBatch;
     }
 }
 
