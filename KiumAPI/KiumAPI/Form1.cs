@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
-using System.Data;
+using System.Net;
 
 using AxKHOpenAPILib;
 using KHOpenAPILib;
@@ -23,6 +23,15 @@ namespace KiumAPI
 
         List<string> codeList;
         List<string> companyList = new List<string>();
+
+        // 야후 API 주가정보 관련 변수들 //
+        string strUrl = "http://ichart.yahoo.com/table.csv?s=";
+        string now_year = System.DateTime.Now.Year.ToString();
+        string now_month = System.DateTime.Now.Month.ToString();
+        string now_day = System.DateTime.Now.Day.ToString();
+        string reuslt;
+        int temp;
+
         int counter = 0;
 
         public Form1()
@@ -30,6 +39,8 @@ namespace KiumAPI
             InitializeComponent();
         }
 
+
+        // KiumAPI에서 데이터가 요청되고 반환된 데이터를 처리할 때 사용하는 함수
         private void axKHOpenAPI1_OnReceiveTrData(object sender, AxKHOpenAPILib._DKHOpenAPIEvents_OnReceiveTrDataEvent e)
         {
             if(e.sRQName == "주식기본정보") { 
@@ -42,11 +53,6 @@ namespace KiumAPI
                     listView1.Items.Add(li);
                 }
             }
-            for(int cnt = 0; cnt < codeList.Count; cnt++)
-            {
-               
-            }
-
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -91,8 +97,15 @@ namespace KiumAPI
 
         }
 
+        #region DB 배치 실행관련 함수
+        
         private void btnBatch_Click(object sender, EventArgs e)
         {
+            // 상장사의 코드만 전부다 받아올 수 있다.
+            string code = axKHOpenAPI1.GetCodeListByMarket("0");
+            codeList = code.Split(';').ToList<string>();         // 1295 개
+            //MessageBox.Show(codeList.Count.ToString() + codeList[0]);
+
             try
             {
                 SqlConnection con = new SqlConnection();
@@ -128,5 +141,95 @@ namespace KiumAPI
 
 
         }
+
+        private void btnScrap_Click(object sender, EventArgs e)
+        {
+            List<string> list_data = new List<string>();
+            now_month = (Int32.Parse(now_month) - 1).ToString();
+
+            string code = axKHOpenAPI1.GetCodeListByMarket("0");
+            codeList = code.Split(';').ToList<string>();         // 1295 개
+
+            try
+            {
+                for (int cnt = 0; cnt < codeList.Count; cnt++)
+                {
+                    companyList.Add(axKHOpenAPI1.GetMasterCodeName(codeList[cnt]));
+                }
+                //MessageBox.Show(companyList[1200]);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            // MessageBox.Show(companyList[1030]);
+
+            SqlConnection conn = new SqlConnection();
+            string connectionString = @"Data Source=.\SQLEXPRESS;Integrated Security=SSPI;Initial Catalog=KiumAPI";
+            conn.ConnectionString = connectionString;
+            conn.Open();
+            MessageBox.Show("연결성공");
+            for (int i = 0; i < codeList.Count; i++)
+            {
+                //문제점은 이곳 strUrl의 코드값이 제대로 들어가고 있지 않다.... 왜이러지?
+                strUrl += codeList[i] + ".KS";
+                strUrl += "&a=0&b=1&c=2014&d=" + now_month + "&e=" + now_day + "&f=" + now_year + "&g=d&x=.csv";
+                //MessageBox.Show(strUrl);
+                using (WebClient wc = new WebClient())
+                {
+                    try
+                    {
+                        reuslt = wc.DownloadString(strUrl);
+                        list_data = reuslt.Split('\n').ToList<string>();
+                        //MessageBox.Show(list_data.Count.ToString());
+                        //MessageBox.Show(list_data[0]);
+                    }
+                    catch(Exception ex)
+                    {
+                       MessageBox.Show(ex.Message);
+                        continue;
+                    }
+
+                }
+                strUrl = "http://ichart.yahoo.com/table.csv?s=";
+
+                try
+                { 
+                    for(int j = 1; j < list_data.Count; j++) { 
+                        SqlCommand cmd = new SqlCommand("GET_STOCK_DATA", conn);
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                        SqlParameter param1 = new SqlParameter("@tableName", System.Data.SqlDbType.NVarChar);
+                        param1.Value = "\"" + companyList[i] + "\"";
+                        cmd.Parameters.Add(param1);
+
+                        SqlParameter param2 = new SqlParameter("@price", System.Data.SqlDbType.Int);
+                        //MessageBox.Show(Convert.ToInt16(list_data[j].Split(',')[4]).ToString());
+                        temp = (int)float.Parse(list_data[j].Split(',')[4]);
+                        param2.Value =temp;
+                        cmd.Parameters.Add(param2);
+
+
+                        SqlParameter param3 = new SqlParameter("@date", System.Data.SqlDbType.DateTime);
+                        param3.Value = list_data[j].Split(',')[0];
+                        cmd.Parameters.Add(param3);
+
+                        //MessageBox.Show(cmd.ToString());
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                catch (Exception ex2)
+                {
+                    MessageBox.Show(ex2.Message);
+                    continue;
+                }
+            }
+            // Console.WriteLine(strUrl);
+            conn.Close();
+        }
+
+        #endregion
     }
 }

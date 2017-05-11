@@ -37,6 +37,7 @@
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.btnBatch = new System.Windows.Forms.Button();
+            this.btnScrap = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.axKHOpenAPI1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -105,7 +106,7 @@
             // 
             // btnBatch
             // 
-            this.btnBatch.Location = new System.Drawing.Point(13, 304);
+            this.btnBatch.Location = new System.Drawing.Point(13, 268);
             this.btnBatch.Name = "btnBatch";
             this.btnBatch.Size = new System.Drawing.Size(75, 23);
             this.btnBatch.TabIndex = 6;
@@ -113,11 +114,22 @@
             this.btnBatch.UseVisualStyleBackColor = true;
             this.btnBatch.Click += new System.EventHandler(this.btnBatch_Click);
             // 
+            // btnScrap
+            // 
+            this.btnScrap.Location = new System.Drawing.Point(13, 298);
+            this.btnScrap.Name = "btnScrap";
+            this.btnScrap.Size = new System.Drawing.Size(75, 23);
+            this.btnScrap.TabIndex = 7;
+            this.btnScrap.Text = "스크랩";
+            this.btnScrap.UseVisualStyleBackColor = true;
+            this.btnScrap.Click += new System.EventHandler(this.btnScrap_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(817, 340);
+            this.Controls.Add(this.btnScrap);
             this.Controls.Add(this.btnBatch);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
@@ -141,6 +153,7 @@
         private System.Windows.Forms.ColumnHeader 종목코드;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button btnBatch;
+        private System.Windows.Forms.Button btnScrap;
     }
 }
 
