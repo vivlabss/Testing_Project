@@ -102,9 +102,9 @@ namespace KiumAPI
         private void btnBatch_Click(object sender, EventArgs e)
         {
             // 상장사의 코드만 전부다 받아올 수 있다.
-            string code = axKHOpenAPI1.GetCodeListByMarket("0");
-            codeList = code.Split(';').ToList<string>();         // 1295 개
-            //MessageBox.Show(codeList.Count.ToString() + codeList[0]);
+            //string code = axKHOpenAPI1.GetCodeListByMarket("0");
+            //codeList = code.Split(';').ToList<string>();         // 1295 개
+            MessageBox.Show(codeList.Count.ToString() + codeList[0]);
 
             try
             {
@@ -171,7 +171,6 @@ namespace KiumAPI
             MessageBox.Show("연결성공");
             for (int i = 0; i < codeList.Count; i++)
             {
-                //문제점은 이곳 strUrl의 코드값이 제대로 들어가고 있지 않다.... 왜이러지?
                 strUrl += codeList[i] + ".KS";
                 strUrl += "&a=0&b=1&c=2014&d=" + now_month + "&e=" + now_day + "&f=" + now_year + "&g=d&x=.csv";
                 //MessageBox.Show(strUrl);
@@ -182,7 +181,7 @@ namespace KiumAPI
                         reuslt = wc.DownloadString(strUrl);
                         list_data = reuslt.Split('\n').ToList<string>();
                         //MessageBox.Show(list_data.Count.ToString());
-                        //MessageBox.Show(list_data[0]);
+                        //MessageBox.Show(list_data[1]);
                     }
                     catch(Exception ex)
                     {
@@ -194,35 +193,44 @@ namespace KiumAPI
                 strUrl = "http://ichart.yahoo.com/table.csv?s=";
 
                 try
-                { 
-                    for(int j = 1; j < list_data.Count; j++) { 
-                        SqlCommand cmd = new SqlCommand("GET_STOCK_DATA", conn);
-                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                {
+                    for (int j = 1; j < list_data.Count; j++)
+                    {
 
-                        SqlParameter param1 = new SqlParameter("@tableName", System.Data.SqlDbType.NVarChar);
-                        param1.Value = "\"" + companyList[i] + "\"";
-                        cmd.Parameters.Add(param1);
+                        string insertTable = "INSERT INTO " + companyList[i] +
+                            "(Date, Price)VALUES('"
+                            + list_data[j].Split(',')[0] + "','"
+                            + list_data[j].Split(',')[4]
+                            + "')";
 
-                        SqlParameter param2 = new SqlParameter("@price", System.Data.SqlDbType.Int);
-                        //MessageBox.Show(Convert.ToInt16(list_data[j].Split(',')[4]).ToString());
-                        temp = (int)float.Parse(list_data[j].Split(',')[4]);
-                        param2.Value =temp;
-                        cmd.Parameters.Add(param2);
+                        SqlCommand insertCmd = new SqlCommand(insertTable, conn);
+                        insertCmd.ExecuteNonQuery();
+
+                        //SqlCommand cmd = new SqlCommand("GET_STOCK_DATA", conn);
+                        //cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                        //SqlParameter param1 = new SqlParameter("@tableName", System.Data.SqlDbType.NVarChar);
+                        //param1.Value = companyList[i];
+                        //cmd.Parameters.Add(param1);
+
+                        //SqlParameter param2 = new SqlParameter("@price", System.Data.SqlDbType.NVarChar);
+                        ////MessageBox.Show(Convert.ToInt16(list_data[j].Split(',')[4]).ToString());
+                        //// temp = (int)float.Parse(list_data[j].Split(',')[4]);
+                        //param2.Value = list_data[j].Split(',')[4];
+                        //cmd.Parameters.Add(param2);
 
 
-                        SqlParameter param3 = new SqlParameter("@date", System.Data.SqlDbType.DateTime);
-                        param3.Value = list_data[j].Split(',')[0];
-                        cmd.Parameters.Add(param3);
-
-                        //MessageBox.Show(cmd.ToString());
-
-                        cmd.ExecuteNonQuery();
+                        //SqlParameter param3 = new SqlParameter("@date", System.Data.SqlDbType.NVarChar);
+                        //param3.Value = list_data[j].Split(',')[0];
+                        //MessageBox.Show(param3.Value.ToString());
+                        //cmd.Parameters.Add(param3);
+                        //cmd.ExecuteNonQuery();
                     }
                 }
 
-                catch (Exception ex2)
+                catch
                 {
-                    MessageBox.Show(ex2.Message);
+                    //MessageBox.Show(ex2.Message);
                     continue;
                 }
             }
