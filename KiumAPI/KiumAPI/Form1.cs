@@ -23,6 +23,7 @@ namespace KiumAPI
 
         List<string> codeList;
         List<string> companyList = new List<string>();
+        object[,] test;
 
         // 야후 API 주가정보 관련 변수들 //
         string strUrl = "http://ichart.yahoo.com/table.csv?s=";
@@ -53,6 +54,46 @@ namespace KiumAPI
                     listView1.Items.Add(li);
                 }
             }
+
+            if(e.sRQName == "주식일봉차트조회")
+            {
+                int nMaxRow = axKHOpenAPI1.GetRepeatCnt(e.sTrCode, e.sRQName);
+                // [index,1] : 가격, [index, 4] : 거래일자
+                test = axKHOpenAPI1.GetCommDataEx(e.sTrCode, e.sRQName) as object[,];
+
+                List<string> list_data = new List<string>();
+
+                SqlConnection conn = new SqlConnection();
+                string connectionString = @"Data Source=.\SQLEXPRESS;Integrated Security=SSPI;Initial Catalog=KiumAPI";
+                conn.ConnectionString = connectionString;
+                conn.Open();
+                MessageBox.Show("연결성공");
+
+                for (int i = 0; i < codeList.Count; i++)
+                {
+                    for(int j =0; j < nMaxRow; j++) {
+                        try
+                        {
+                            string insertTable = "INSERT INTO " + companyList[i] +
+                            "(Date, Price)VALUES('"
+                            + test[j, 4] + "','"
+                            + test[j, 1]
+                            + "')";
+
+                            SqlCommand insertCmd = new SqlCommand(insertTable, conn);
+                            insertCmd.ExecuteNonQuery();
+                        }
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                            continue;
+                        }
+
+                    }
+                    Console.WriteLine(companyList[i]);
+               }
+               conn.Close();
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -66,9 +107,29 @@ namespace KiumAPI
         }
 
         private void button2_Click(object sender, EventArgs e)
-        {          
-            axKHOpenAPI1.SetInputValue("종목코드", "000050");
-            int nRet = axKHOpenAPI1.CommRqData("주식기본정보", "OPT10001", 0, "1001");                           
+        {
+            string code = axKHOpenAPI1.GetCodeListByMarket("0");
+            codeList = code.Split(';').ToList<string>();         // 1295 개
+
+            try
+            {
+                for (int cnt = 0; cnt < codeList.Count; cnt++)
+                {
+                    companyList.Add(axKHOpenAPI1.GetMasterCodeName(codeList[cnt]));
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            for (int i = 0; i < codeList.Count; i++)
+            {
+                axKHOpenAPI1.SetInputValue("종목코드", codeList[i]);
+                axKHOpenAPI1.SetInputValue("기준일자", "20170511");
+                axKHOpenAPI1.SetInputValue("수정주가구분", "0");
+                int nRet = axKHOpenAPI1.CommRqData("주식일봉차트조회", "OPT10081", 0, "1001");
+            }
         }
 
         private void button3_Click(object sender, EventArgs e)
