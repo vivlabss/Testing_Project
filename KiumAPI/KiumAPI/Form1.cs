@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.Net;
+using System.Threading;
 
 using AxKHOpenAPILib;
 using KHOpenAPILib;
@@ -135,12 +136,17 @@ namespace KiumAPI
             {
                 try
                 {
+                    if (i % 100 == 0)
+                    {
+                        Thread.Sleep(3000);
+                    }
                     temp = i;
                     axKHOpenAPI1.SetInputValue("종목코드", codeList[i]);
                     axKHOpenAPI1.SetInputValue("기준일자", "20170511");
                     axKHOpenAPI1.SetInputValue("수정주가구분", "0");
                     axKHOpenAPI1.CommRqData("주식일봉차트조회", "OPT10081", 0, "1001");
-                    Console.WriteLine(companyList[i]);
+                    Console.WriteLine(companyList[i] + " : " + i);
+
                 }catch(Exception ex)
                 {
                     Console.WriteLine(ex.Message);
