@@ -3,15 +3,14 @@
 ALTER PROC GET_STOCK_DATA
 @tableName nvarchar(1024),
 @price nvarchar(128),
-@date nvarchar(128)
+@date datetime
 AS
 BEGIN
 DECLARE
 @strSQL nvarchar(2048)
-SET @strSQL = 'INSERT INTO ' + @tableName + '(Price, Date) VALUES ' + '(' + @price + ',' + @date + ')'
+SET @strSQL = 'INSERT INTO ' + @tableName + '(Price, Date) VALUES ' + '(' + @price + ',' +@date+ ')'
 EXECUTE sp_executesql @strSQL
 END
-
 
 // 배치관련 : 증권사에서 내놓은 상품은 야후API에 등록되어 있지 않다. 그런 것들은 따로 처리해야할듯.
 // 야후에서 받아올 수 없는 것들은 테이블을 만들지 않도록 처리해야겠다.

@@ -31,7 +31,7 @@ namespace KiumAPI
         string now_month = System.DateTime.Now.Month.ToString();
         string now_day = System.DateTime.Now.Day.ToString();
         string reuslt;
-        int temp;
+        int temp = 0;
 
         int counter = 0;
 
@@ -67,31 +67,39 @@ namespace KiumAPI
                 string connectionString = @"Data Source=.\SQLEXPRESS;Integrated Security=SSPI;Initial Catalog=KiumAPI";
                 conn.ConnectionString = connectionString;
                 conn.Open();
-                MessageBox.Show("연결성공");
+                //MessageBox.Show("연결성공");
 
-                for (int i = 0; i < codeList.Count; i++)
+                for(int j =0; j < nMaxRow; j++)
                 {
-                    for(int j =0; j < nMaxRow; j++) {
-                        try
-                        {
-                            string insertTable = "INSERT INTO " + companyList[i] +
-                            "(Date, Price)VALUES('"
-                            + test[j, 4] + "','"
-                            + test[j, 1]
-                            + "')";
+                   try
+                   {
+                        //string insertTable = "INSERT INTO " + companyList[temp] +
+                        //"(Date, Price)VALUES('"
+                        //+ test[j, 4] + "','"
+                        //+ test[j, 1]
+                        //+ "')";
 
-                            SqlCommand insertCmd = new SqlCommand(insertTable, conn);
-                            insertCmd.ExecuteNonQuery();
-                        }
-                        catch(Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                            continue;
-                        }
+                        SqlCommand insertCmd = new SqlCommand("GET_STOCK_DATA", conn);
+                        insertCmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        SqlParameter param1 = new SqlParameter("@tableName", System.Data.SqlDbType.NVarChar);
+                        SqlParameter param2 = new SqlParameter("@price", System.Data.SqlDbType.NVarChar);
+                        SqlParameter param3 = new SqlParameter("@date", System.Data.SqlDbType.NVarChar);
+                        param1.Value = companyList[temp];
+                        param2.Value = test[j, 1];
+                        param3.Value = test[j, 4];
+                        insertCmd.Parameters.Add(param1);
+                        insertCmd.Parameters.Add(param2);
+                        insertCmd.Parameters.Add(param3);
 
-                    }
-                    Console.WriteLine(companyList[i]);
-               }
+                        insertCmd.ExecuteNonQuery();
+                   }
+                   catch(Exception ex)
+                   {
+                       Console.WriteLine(ex.Message);
+                       continue;
+                   }
+
+               }             
                conn.Close();
             }
         }
@@ -125,10 +133,19 @@ namespace KiumAPI
 
             for (int i = 0; i < codeList.Count; i++)
             {
-                axKHOpenAPI1.SetInputValue("종목코드", codeList[i]);
-                axKHOpenAPI1.SetInputValue("기준일자", "20170511");
-                axKHOpenAPI1.SetInputValue("수정주가구분", "0");
-                int nRet = axKHOpenAPI1.CommRqData("주식일봉차트조회", "OPT10081", 0, "1001");
+                try
+                {
+                    temp = i;
+                    axKHOpenAPI1.SetInputValue("종목코드", codeList[i]);
+                    axKHOpenAPI1.SetInputValue("기준일자", "20170511");
+                    axKHOpenAPI1.SetInputValue("수정주가구분", "0");
+                    axKHOpenAPI1.CommRqData("주식일봉차트조회", "OPT10081", 0, "1001");
+                    Console.WriteLine(companyList[i]);
+                }catch(Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+
             }
         }
 
